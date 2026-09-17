@@ -1,373 +1,465 @@
+Ho gaya bhai! 💪 Maine pura UI **corporate admin dashboard style** me redesign kar diya hai - jaise professional SaaS websites hoti hain (Stripe, Notion type). Logic bilkul same hai, sirf design badla hai.
 
+### Naya kya hai:
+- 🎯 **Sidebar Navigation** - left side dark sidebar (pro dashboards jaisa)
+- 🔍 **Student Search Box** - table me naam se search kar sakte ho (naya feature)
+- 📊 **Collection Rate Progress Bar** - dashboard pe % ke sath (naya feature)
+- 📅 **Live Date Display** - topbar me aaj ki date (naya feature)
+- ✨ Naye icons, naye text labels, professional buttons
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Fee Manager - Pro</title>
+<title>FeeDesk — Student Fee Management</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
+*{ margin:0; padding:0; box-sizing:border-box; }
 :root{
-  --bg: #F8FAFF; --bg-2: #EEF2FF; --card: #FFFFFF;
-  --text: #0F172A; --muted: #64748B;
-  --border: #E2E8F0; --border-2: #CBD5E1;
-  --primary: #6366F1; --primary-dark: #4F46E5;
-  --primary-light: #E0E7FF; --primary-glow: rgba(99,102,241,.18);
-  --secondary: #06B6D4;
-  --success: #10B981; --danger: #EF4444; --warning: #F59E0B;
-  --shadow-sm: 0 2px 8px rgba(15,23,42,.04);
-  --shadow-md: 0 8px 24px rgba(15,23,42,.06);
-  --shadow-lg: 0 20px 40px rgba(15,23,42,.08);
-  --shadow-p: 0 10px 30px rgba(99,102,241,.35);
-  --radius-xl: 24px; --radius-lg: 18px; --radius-md: 12px; --radius-full: 999px;
-  --trans: all .38s cubic-bezier(.32,.72,0,1);
-  --trans-fast: all .2s cubic-bezier(.32,.72,0,1);
-  --font: 'Inter', system-ui, sans-serif;
-  --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  --sidebar:#0F172A; --sidebar-hover:#1E293B; --sidebar-text:#94A3B8;
+  --bg:#F1F5F9; --card:#FFFFFF;
+  --text:#0F172A; --muted:#64748B;
+  --border:#E2E8F0;
+  --accent:#2563EB; --accent-dark:#1D4ED8; --accent-soft:#EFF6FF; --accent-glow:rgba(37,99,235,.15);
+  --teal:#0D9488; --green:#059669; --green-soft:#ECFDF5;
+  --amber:#D97706; --amber-soft:#FFFBEB;
+  --red:#DC2626; --red-soft:#FEF2F2;
+  --sh-sm:0 1px 3px rgba(15,23,42,.06);
+  --sh-md:0 4px 16px rgba(15,23,42,.08);
+  --sh-lg:0 24px 48px rgba(15,23,42,.14);
+  --r-lg:16px; --r-md:10px; --r-full:999px;
+  --tr:all .3s cubic-bezier(.4,0,.2,1);
+  --font:'Inter',system-ui,sans-serif;
 }
 html{ scroll-behavior:smooth; }
-body{ font-family: var(--font); background: var(--bg); color: var(--text); min-height:100vh; -webkit-font-smoothing: antialiased; overflow-x:hidden; }
+body{ font-family:var(--font); background:var(--bg); color:var(--text); min-height:100vh; -webkit-font-smoothing:antialiased; }
 ::-webkit-scrollbar{ width:6px; height:6px; }
-::-webkit-scrollbar-thumb{ background: #C7D2FE; border-radius:10px; }
-::-webkit-scrollbar-thumb:hover{ background: var(--primary); }
+::-webkit-scrollbar-thumb{ background:#CBD5E1; border-radius:10px; }
+::-webkit-scrollbar-thumb:hover{ background:#94A3B8; }
 
-/* LOGIN SCREEN */
+/* ===================== LOGIN ===================== */
 #loginScreen{
   position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center;
-  background: radial-gradient(1200px 600px at 20% -10%, #A5B4FC 0%, transparent 60%),
-              radial-gradient(1000px 500px at 90% 110%, #67E8F9 0%, transparent 60%),
-              linear-gradient(180deg, #F8FAFF 0%, #EEF2FF 100%);
-  transition: opacity .6s ease, transform .6s ease; padding: 24px;
+  background:#0F172A;
+  background-image:
+    radial-gradient(800px 400px at 80% -10%, rgba(37,99,235,.25), transparent 60%),
+    radial-gradient(700px 400px at 10% 110%, rgba(13,148,136,.18), transparent 60%);
+  padding:24px; transition:opacity .5s ease, transform .5s ease;
 }
-#loginScreen.hidden{ opacity:0; transform: scale(1.02); pointer-events:none; }
-.login-bg-shapes{ position:absolute; inset:0; overflow:hidden; pointer-events:none; }
-.shape{ position:absolute; border-radius:50%; filter: blur(40px); opacity:.5; animation: float 8s ease-in-out infinite alternate; }
-.s1{ width:400px; height:400px; background:#C7D2FE; top:-80px; left:-80px; }
-.s2{ width:500px; height:500px; background:#BAE6FD; bottom:-100px; right:-100px; animation-delay:-2s; }
-.s3{ width:300px; height:300px; background:#DDD6FE; top:50%; left:50%; animation-delay:-4s; }
-@keyframes float{ 0%{ transform:translate(0,0) scale(1);} 100%{ transform:translate(30px,-30px) scale(1.1);} }
-
+#loginScreen.hidden{ opacity:0; transform:scale(1.03); pointer-events:none; }
+.login-grid-lines{ position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px); background-size:48px 48px; pointer-events:none; }
 .login-wrapper{
-  position:relative; z-index:2; display:grid; grid-template-columns:1.1fr .9fr;
-  max-width:1080px; width:100%; background:rgba(255,255,255,.7);
-  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-  border:1px solid rgba(255,255,255,.8); border-radius:var(--radius-xl);
-  box-shadow:var(--shadow-lg); overflow:hidden;
-  animation: popIn .7s cubic-bezier(.32,.72,0,1);
+  position:relative; z-index:2; display:grid; grid-template-columns:1fr 1fr;
+  max-width:960px; width:100%; border-radius:20px; overflow:hidden;
+  box-shadow:var(--sh-lg); animation:rise .6s cubic-bezier(.4,0,.2,1);
 }
-@keyframes popIn{ from{ opacity:0; transform:translateY(20px) scale(.98);} to{ opacity:1; transform:translateY(0) scale(1);} }
+@keyframes rise{ from{ opacity:0; transform:translateY(24px);} to{ opacity:1; transform:translateY(0);} }
+.login-left{ background:linear-gradient(160deg,#1E3A8A 0%,#2563EB 55%,#0D9488 130%); padding:48px 40px; color:#fff; display:flex; flex-direction:column; justify-content:space-between; }
+.logo-row{ display:flex; align-items:center; gap:12px; margin-bottom:36px; }
+.logo-mark{ width:44px; height:44px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25); border-radius:12px; display:grid; place-items:center; font-size:20px; }
+.logo-row span{ font-size:19px; font-weight:800; letter-spacing:-.3px; }
+.login-left h1{ font-size:30px; font-weight:800; line-height:1.2; letter-spacing:-.6px; }
+.login-left .tagline{ margin-top:12px; font-size:14px; line-height:1.7; color:rgba(255,255,255,.75); }
+.trust-list{ margin-top:30px; display:grid; gap:12px; }
+.trust-item{ display:flex; gap:12px; align-items:flex-start; font-size:13px; color:rgba(255,255,255,.85); }
+.trust-item i{ margin-top:2px; width:26px; height:26px; flex-shrink:0; background:rgba(255,255,255,.14); border-radius:8px; display:grid; place-items:center; font-size:11px; }
+.login-left .copyright{ font-size:11px; color:rgba(255,255,255,.45); margin-top:32px; }
 
-.login-branding{ padding:48px 44px; background:linear-gradient(135deg,#6366F1 0%,#4F46E5 50%,#06B6D4 100%); color:white; display:flex; flex-direction:column; justify-content:space-between; }
-.brand-top i{ font-size:42px; background:rgba(255,255,255,.2); width:64px; height:64px; display:grid; place-items:center; border-radius:16px; margin-bottom:20px; }
-.brand-top h1{ font-family:var(--font-display); font-size:36px; line-height:1.1; letter-spacing:-.5px; }
-.brand-top p{ margin-top:12px; opacity:.9; line-height:1.6; font-size:15px; }
-.brand-features{ margin-top:32px; display:grid; gap:14px; }
-.feat{ display:flex; gap:12px; align-items:center; font-size:14px; background:rgba(255,255,255,.12); padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.15); }
+.login-right{ background:#fff; padding:44px 40px; display:flex; flex-direction:column; justify-content:center; }
+.login-right h2{ font-size:22px; font-weight:800; letter-spacing:-.4px; }
+.login-right .sub{ color:var(--muted); font-size:14px; margin-top:6px; margin-bottom:26px; }
+.role-buttons{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+.role-btn{
+  padding:16px 10px; border:1.5px solid var(--border); border-radius:var(--r-md); background:#fff;
+  cursor:pointer; transition:var(--tr); display:flex; flex-direction:column; align-items:center; gap:7px; font-family:var(--font);
+}
+.role-btn i{ width:38px; height:38px; border-radius:10px; display:grid; place-items:center; font-size:16px; background:var(--bg); color:var(--muted); transition:var(--tr); }
+.role-btn .label{ font-weight:700; font-size:14px; }
+.badge-role{ font-size:10px; color:var(--muted); font-weight:500; }
+.role-btn:hover{ border-color:#BFDBFE; transform:translateY(-2px); box-shadow:var(--sh-md); }
+.role-btn:hover i{ background:var(--accent-soft); color:var(--accent); }
+.role-btn.active-role{ border-color:var(--accent); background:var(--accent-soft); box-shadow:0 0 0 4px var(--accent-glow); }
+.role-btn.active-role i{ background:var(--accent); color:#fff; }
 
-.login-card{ padding:40px 36px; background:white; display:flex; flex-direction:column; justify-content:center; }
-.login-card .subtitle{ color:var(--muted); font-size:14px; margin-bottom:22px; }
-.role-divider{ display:flex; align-items:center; gap:12px; margin:18px 0 16px; color:var(--muted); font-size:12px; font-weight:600; letter-spacing:1px; text-transform:uppercase; }
-.role-divider::before,.role-divider::after{ content:''; flex:1; height:1px; background:var(--border); }
-.role-buttons{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:18px; }
-.role-btn{ padding:16px 12px; border:1.5px solid var(--border); border-radius:var(--radius-md); background:#F8FAFF; cursor:pointer; transition:var(--trans); display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; font-family:var(--font); }
-.role-btn i{ font-size:22px; color:var(--muted); transition:var(--trans); }
-.role-btn .label{ font-weight:600; font-size:14px; }
-.badge-role{ font-size:10px; color:var(--muted); }
-.role-btn:hover{ border-color:var(--primary-light); background:white; transform:translateY(-2px); box-shadow:var(--shadow-sm); }
-.role-btn.active-role{ border-color:var(--primary); background:var(--bg-2); box-shadow:0 0 0 4px var(--primary-glow); }
-.role-btn.active-role i{ color:var(--primary); }
-
-.teacher-login-form{ display:none; margin-top:8px; animation:fadeSlide .4s ease; }
+.teacher-login-form{ display:none; animation:fadeUp .35s ease; }
 .teacher-login-form.show{ display:block; }
+@keyframes fadeUp{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
 .field{ display:flex; flex-direction:column; gap:6px; margin-bottom:14px; text-align:left; }
-.field label{ font-size:13px; font-weight:600; color:var(--text); }
-.field input{ padding:12px 14px; border:1.5px solid var(--border); border-radius:10px; font-family:var(--font); font-size:14px; background:#F8FAFF; transition:var(--trans-fast); outline:none; }
-.field input:focus{ border-color:var(--primary); background:white; box-shadow:0 0 0 4px var(--primary-glow); }
+.field label{ font-size:12px; font-weight:700; color:var(--text); text-transform:uppercase; letter-spacing:.5px; }
+.field input{ padding:12px 14px; border:1.5px solid var(--border); border-radius:var(--r-md); font-family:var(--font); font-size:14px; background:#F8FAFC; transition:var(--tr); outline:none; }
+.field input:focus{ border-color:var(--accent); background:#fff; box-shadow:0 0 0 4px var(--accent-glow); }
 
-.btn-login,.btn-primary,.btn-secondary,.btn-danger{
-  border:none; border-radius:var(--radius-full); padding:12px 22px; font-family:var(--font); font-weight:600; font-size:14px; cursor:pointer; transition:var(--trans); display:inline-flex; align-items:center; justify-content:center; gap:8px;
+.btn-login{
+  width:100%; padding:13px; border:none; border-radius:var(--r-md);
+  background:var(--accent); color:#fff; font-family:var(--font); font-size:14px; font-weight:700; cursor:pointer;
+  transition:var(--tr); display:flex; align-items:center; justify-content:center; gap:8px; margin-top:4px;
+  box-shadow:0 6px 16px rgba(37,99,235,.3);
 }
-.btn-login{ width:100%; background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:white; box-shadow:var(--shadow-p); margin-top:6px; }
-.btn-login:hover{ transform:translateY(-2px); box-shadow:0 14px 30px rgba(99,102,241,.45); }
+.btn-login:hover{ background:var(--accent-dark); transform:translateY(-1px); box-shadow:0 10px 24px rgba(37,99,235,.4); }
 .btn-login:active{ transform:scale(.98); }
-.btn-primary{ background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:white; box-shadow:var(--shadow-p); }
-.btn-primary:hover{ transform:translateY(-2px); }
-.btn-primary:disabled,.btn-secondary:disabled{ opacity:.5; cursor:not-allowed; transform:none !important; }
-.btn-secondary{ background:white; border:1.5px solid var(--border); color:var(--text); }
-.btn-secondary:hover{ background:var(--bg); border-color:var(--border-2); }
-.btn-danger{ background:#FEF2F2; color:var(--danger); border:1px solid #FECACA; padding:8px 14px; font-size:13px; }
-.btn-danger:hover{ background:#FEE2E2; }
-.login-error{ color:var(--danger); font-size:13px; min-height:18px; margin-top:10px; }
-.footer-note{ margin-top:18px; font-size:11px; color:var(--muted); text-align:center; }
-.footer-note strong{ color:var(--text); }
-.student-quick-btn{ margin-top:14px; width:100%; padding:12px; border-radius:var(--radius-full); border:1.5px dashed var(--border-2); background:white; color:var(--muted); font-weight:600; font-family:var(--font); font-size:14px; cursor:pointer; transition:var(--trans); }
-.student-quick-btn:hover{ border-color:var(--primary); color:var(--primary); background:var(--bg-2); }
-
-/* APP */
-#app{ display:none; opacity:0; transition:opacity .5s ease; min-height:100vh; padding:20px; }
-#app.visible{ display:block; opacity:1; }
-.app-container{ max-width:1280px; margin:0 auto; }
-.app-header{
-  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;
-  padding:16px 20px; background:rgba(255,255,255,.8); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,.9); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); margin-bottom:20px;
-  position:sticky; top:16px; z-index:20;
+.login-error{ color:var(--red); font-size:13px; min-height:18px; margin-top:10px; font-weight:500; }
+.student-quick-btn{
+  margin-top:12px; width:100%; padding:12px; border:1.5px solid var(--border); border-radius:var(--r-md);
+  background:#fff; color:var(--text); font-family:var(--font); font-size:14px; font-weight:600; cursor:pointer; transition:var(--tr);
+  display:flex; align-items:center; justify-content:center; gap:8px;
 }
-.brand{ display:flex; align-items:center; gap:12px; }
-.brand i{ width:40px; height:40px; display:grid; place-items:center; background:linear-gradient(135deg,var(--primary),var(--secondary)); color:white; border-radius:10px; font-size:18px; }
-.brand h2{ font-family:var(--font-display); font-size:18px; }
-.user-area{ display:flex; align-items:center; gap:14px; }
-.avatar{ width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--secondary)); color:white; display:grid; place-items:center; font-weight:700; }
-.user-info{ text-align:right; line-height:1.2; }
-.user-info .name{ font-weight:600; font-size:14px; }
-.role-tag{ font-size:10px; background:var(--bg-2); color:var(--primary); padding:3px 8px; border-radius:20px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; }
-.role-tag.student-role{ background:#ECFEFF; color:#0891B2; }
-.btn-logout{ border:1px solid var(--border); background:white; width:38px; height:38px; border-radius:10px; cursor:pointer; color:var(--muted); transition:var(--trans-fast); }
-.btn-logout:hover{ background:#FEF2F2; color:var(--danger); border-color:#FECACA; }
+.student-quick-btn:hover{ border-color:var(--teal); color:var(--teal); background:#F0FDFA; }
+.footer-note{ margin-top:20px; font-size:11px; color:var(--muted); text-align:center; padding-top:16px; border-top:1px solid var(--border); }
+.footer-note strong{ color:var(--text); }
 
-/* NAV */
-.nav-tabs{ display:flex; gap:6px; padding:6px; background:white; border-radius:var(--radius-full); box-shadow:var(--shadow-sm); width:fit-content; margin-bottom:22px; border:1px solid var(--border); }
-.tab-btn{ border:none; background:transparent; padding:10px 18px; border-radius:var(--radius-full); font-family:var(--font); font-weight:600; font-size:14px; color:var(--muted); cursor:pointer; transition:var(--trans-fast); display:flex; align-items:center; gap:8px; }
-.tab-btn:hover{ color:var(--text); background:var(--bg); }
-.tab-btn.active{ background:var(--text); color:white; box-shadow:var(--shadow-sm); }
+/* ===================== APP LAYOUT ===================== */
+#app{ display:none; opacity:0; transition:opacity .5s ease; }
+#app.visible{ display:block; opacity:1; }
+.layout{ display:flex; min-height:100vh; }
+
+/* SIDEBAR */
+.sidebar{
+  width:240px; background:var(--sidebar); color:#fff; padding:24px 16px;
+  display:flex; flex-direction:column; gap:8px; position:fixed; top:0; left:0; bottom:0; z-index:50;
+}
+.sidebar .logo-row{ margin-bottom:28px; padding:0 8px; }
+.sidebar .logo-mark{ background:var(--accent); border:none; }
+.side-label{ font-size:10px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:#475569; padding:0 10px; margin:8px 0 4px; }
+.nav-tabs{ display:flex; flex-direction:column; gap:4px; }
+.tab-btn{
+  display:flex; align-items:center; gap:12px; padding:11px 12px; border:none; border-radius:var(--r-md);
+  background:transparent; color:var(--sidebar-text); font-family:var(--font); font-size:14px; font-weight:600;
+  cursor:pointer; transition:var(--tr); text-align:left; width:100%;
+}
+.tab-btn i{ width:20px; text-align:center; font-size:15px; }
+.tab-btn:hover{ background:var(--sidebar-hover); color:#fff; }
+.tab-btn.active{ background:var(--accent); color:#fff; box-shadow:0 4px 12px rgba(37,99,235,.35); }
+.sidebar-footer{ margin-top:auto; padding:14px 10px; border-top:1px solid #1E293B; display:flex; align-items:center; gap:10px; }
+.sidebar-footer .avatar{ width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg,var(--accent),var(--teal)); display:grid; place-items:center; font-weight:800; font-size:14px; color:#fff; flex-shrink:0; }
+.sidebar-footer .user-info{ line-height:1.25; overflow:hidden; }
+.sidebar-footer .name{ font-size:13px; font-weight:700; color:#fff; white-space:nowrap; }
+.role-tag{ font-size:10px; font-weight:700; color:#60A5FA; letter-spacing:.4px; text-transform:uppercase; }
+.role-tag.student-role{ color:#2DD4BF; }
+.btn-logout{ margin-left:auto; border:none; background:transparent; color:#64748B; font-size:15px; cursor:pointer; padding:8px; border-radius:8px; transition:var(--tr); }
+.btn-logout:hover{ background:#7F1D1D; color:#FCA5A5; }
+
+/* MAIN */
+.main{ flex:1; margin-left:240px; padding:0 32px 40px; min-width:0; }
+.topbar{
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:20px 0 16px; border-bottom:1px solid var(--border); margin-bottom:24px; flex-wrap:wrap;
+}
+.topbar .page-title{ font-size:20px; font-weight:800; letter-spacing:-.4px; }
+.topbar .date-chip{ display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--muted); background:var(--card); border:1px solid var(--border); padding:8px 14px; border-radius:var(--r-full); box-shadow:var(--sh-sm); }
+.topbar .date-chip i{ color:var(--accent); }
+
+.view-only-banner{
+  background:var(--amber-soft); border:1px solid #FDE68A; color:#92400E;
+  padding:12px 16px; border-radius:var(--r-md); font-size:13px; font-weight:500; margin-bottom:20px;
+  display:flex; align-items:center; gap:10px;
+}
 
 /* TAB CONTENT */
-.tab-content{ display:none; animation:fadeSlide .45s cubic-bezier(.32,.72,0,1); }
+.tab-content{ display:none; animation:fadeUp .4s cubic-bezier(.4,0,.2,1); }
 .tab-content.active{ display:block; }
-@keyframes fadeSlide{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:translateY(0);} }
 
-.dashboard-greeting{ background:linear-gradient(135deg,#FFFFFF 0%,#F8FAFF 100%); padding:22px 24px; border-radius:var(--radius-lg); border:1px solid var(--border); box-shadow:var(--shadow-sm); margin-bottom:18px; }
-.dashboard-greeting h3{ font-family:var(--font-display); font-size:20px; }
-.dashboard-greeting h3 span{ background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.dashboard-greeting p{ color:var(--muted); font-size:14px; margin-top:4px; }
+/* DASHBOARD */
+.dashboard-greeting{ background:linear-gradient(135deg,#1E3A8A,#2563EB); color:#fff; padding:26px 28px; border-radius:var(--r-lg); margin-bottom:20px; position:relative; overflow:hidden; }
+.dashboard-greeting::after{ content:''; position:absolute; right:-60px; top:-60px; width:220px; height:220px; border-radius:50%; background:rgba(255,255,255,.08); }
+.dashboard-greeting h3{ font-size:21px; font-weight:800; letter-spacing:-.3px; }
+.dashboard-greeting p{ margin-top:6px; font-size:14px; color:rgba(255,255,255,.8); }
 
-.stats-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-bottom:22px; }
-.stat-card{ background:white; padding:20px; border-radius:var(--radius-lg); border:1px solid var(--border); box-shadow:var(--shadow-sm); transition:var(--trans); position:relative; overflow:hidden; border-left:4px solid var(--primary); }
-.stat-card::after{ content:''; position:absolute; top:-30px; right:-30px; width:100px; height:100px; background:radial-gradient(circle,var(--primary-glow),transparent 70%); border-radius:50%; }
-.stat-card:hover{ transform:translateY(-4px); box-shadow:var(--shadow-md); }
-.stat-label{ font-size:12px; font-weight:600; letter-spacing:.6px; text-transform:uppercase; color:var(--muted); }
-.stat-number{ font-family:var(--font-display); font-size:32px; font-weight:700; margin-top:6px; }
-.stat-icon{ position:absolute; top:18px; right:18px; font-size:20px; opacity:.18; }
-.stat-card.green{ border-left-color:var(--success); } .stat-card.green .stat-number{ color:var(--success); }
-.stat-card.orange{ border-left-color:var(--warning); } .stat-card.orange .stat-number{ color:var(--warning); }
-.stat-card.red{ border-left-color:var(--danger); } .stat-card.red .stat-number{ color:var(--danger); }
+.stats-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-bottom:20px; }
+.stat-card{ background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:20px; box-shadow:var(--sh-sm); transition:var(--tr); display:flex; align-items:flex-start; gap:14px; }
+.stat-card:hover{ transform:translateY(-3px); box-shadow:var(--sh-md); }
+.stat-ico{ width:44px; height:44px; border-radius:12px; display:grid; place-items:center; font-size:17px; flex-shrink:0; background:var(--accent-soft); color:var(--accent); }
+.stat-card.green .stat-ico{ background:var(--green-soft); color:var(--green); }
+.stat-card.orange .stat-ico{ background:var(--amber-soft); color:var(--amber); }
+.stat-card.red .stat-ico{ background:var(--red-soft); color:var(--red); }
+.stat-label{ font-size:12px; font-weight:600; color:var(--muted); }
+.stat-number{ font-size:28px; font-weight:800; letter-spacing:-.5px; margin-top:2px; }
 
-.card-panel{ background:white; border-radius:var(--radius-lg); padding:24px; border:1px solid var(--border); box-shadow:var(--shadow-sm); margin-bottom:18px; }
-.section-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
-.section-header h3{ font-size:17px; font-weight:700; font-family:var(--font-display); }
-.form-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-bottom:14px; }
-.card-panel .field input{ background:white; }
+.progress-panel{ background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:22px 24px; box-shadow:var(--sh-sm); margin-bottom:20px; }
+.progress-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.progress-head .t{ font-size:14px; font-weight:700; }
+.progress-head .pct{ font-size:14px; font-weight:800; color:var(--accent); }
+.progress-track{ height:10px; background:var(--bg); border-radius:var(--r-full); overflow:hidden; }
+.progress-fill{ height:100%; width:0%; border-radius:var(--r-full); background:linear-gradient(90deg,var(--accent),var(--teal)); transition:width .8s cubic-bezier(.4,0,.2,1); }
+.progress-hint{ margin-top:10px; font-size:12px; color:var(--muted); }
+
+/* PANELS */
+.card-panel{ background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:24px; box-shadow:var(--sh-sm); margin-bottom:20px; }
+.panel-title{ display:flex; align-items:center; gap:10px; font-size:15px; font-weight:700; margin-bottom:18px; }
+.panel-title i{ width:32px; height:32px; border-radius:9px; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center; font-size:13px; }
+.section-header{ margin-bottom:4px; }
+.form-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-bottom:16px; }
+.card-panel .field input{ background:#fff; }
+.text-muted{ color:var(--muted); font-size:14px; }
+
+/* BUTTONS */
+.btn-primary,.btn-secondary,.btn-danger{
+  border:none; border-radius:var(--r-md); font-family:var(--font); font-weight:700; cursor:pointer;
+  transition:var(--tr); display:inline-flex; align-items:center; justify-content:center; gap:8px;
+}
+.btn-primary{ padding:11px 22px; font-size:14px; background:var(--accent); color:#fff; box-shadow:0 4px 12px rgba(37,99,235,.28); }
+.btn-primary:hover{ background:var(--accent-dark); transform:translateY(-1px); }
+.btn-primary:active{ transform:scale(.98); }
+.btn-primary:disabled,.btn-secondary:disabled{ opacity:.5; cursor:not-allowed; transform:none!important; }
+.btn-secondary{ padding:11px 20px; font-size:14px; background:#fff; border:1.5px solid var(--border); color:var(--text); }
+.btn-secondary:hover{ background:var(--bg); }
+.btn-danger{ padding:7px 14px; font-size:12px; background:var(--red-soft); color:var(--red); border:1px solid #FECACA; }
+.btn-danger:hover{ background:#FEE2E2; }
+.btn-danger:disabled{ opacity:.4; cursor:not-allowed; }
+
+/* SEARCH */
+.search-box{ position:relative; max-width:300px; width:100%; margin-bottom:14px; }
+.search-box i{ position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:13px; }
+.search-box input{ width:100%; padding:10px 14px 10px 36px; border:1.5px solid var(--border); border-radius:var(--r-md); font-family:var(--font); font-size:13px; background:#fff; outline:none; transition:var(--tr); }
+.search-box input:focus{ border-color:var(--accent); box-shadow:0 0 0 4px var(--accent-glow); }
 
 /* TABLE */
-.table-wrapper{ overflow:auto; border-radius:var(--radius-md); border:1px solid var(--border); }
+.table-wrapper{ overflow:auto; border:1px solid var(--border); border-radius:var(--r-md); }
 .student-table{ width:100%; border-collapse:collapse; font-size:14px; min-width:640px; }
-.student-table thead{ background:#F8FAFF; }
-.student-table th{ padding:12px 16px; text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); font-weight:600; border-bottom:1px solid var(--border); }
-.student-table td{ padding:14px 16px; border-bottom:1px solid #F1F5F9; }
-.student-table tbody tr{ transition:var(--trans-fast); }
-.student-table tbody tr:hover{ background:#F8FAFF; }
-.text-muted{ color:var(--muted); font-size:14px; }
-.empty-row td{ text-align:center; padding:30px !important; color:var(--muted); }
+.student-table thead{ background:#F8FAFC; }
+.student-table th{ padding:12px 16px; text-align:left; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--muted); border-bottom:1px solid var(--border); }
+.student-table td{ padding:13px 16px; border-bottom:1px solid #F1F5F9; vertical-align:middle; }
+.student-table tbody tr{ transition:background .15s ease; }
+.student-table tbody tr:hover{ background:#F8FAFC; }
+.student-table tbody tr:last-child td{ border-bottom:none; }
+.empty-row td{ text-align:center; padding:36px!important; color:var(--muted); }
 .actions{ display:flex; gap:8px; }
 
 /* FEES */
 .fee-student-selector{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
-.fee-student-selector select{ padding:10px 14px; border:1.5px solid var(--border); border-radius:10px; background:white; font-family:var(--font); font-weight:500; min-width:240px; outline:none; transition:var(--trans-fast); cursor:pointer; }
-.fee-student-selector select:focus{ border-color:var(--primary); box-shadow:0 0 0 4px var(--primary-glow); }
-.fee-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:14px; margin-top:12px; }
-.fee-item{ background:var(--bg); border:1.5px solid transparent; border-radius:var(--radius-md); padding:14px; transition:var(--trans-fast); }
-.fee-item:hover{ border-color:var(--primary-light); background:white; transform:translateY(-2px); box-shadow:var(--shadow-sm); }
-.month-label{ display:flex; justify-content:space-between; align-items:center; font-weight:600; font-size:14px; margin-bottom:10px; }
-.status-badge{ font-size:11px; padding:3px 10px; border-radius:20px; font-weight:700; }
-.status-badge.paid{ background:#D1FAE5; color:#065F46; }
-.status-badge.unpaid{ background:#F1F5F9; color:var(--muted); }
+.fee-student-selector label{ font-size:13px; font-weight:700; }
+.fee-student-selector select{
+  padding:10px 38px 10px 14px; border:1.5px solid var(--border); border-radius:var(--r-md); background:#fff;
+  font-family:var(--font); font-size:14px; font-weight:600; min-width:250px; outline:none; cursor:pointer; transition:var(--tr);
+  appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center;
+}
+.fee-student-selector select:focus{ border-color:var(--accent); box-shadow:0 0 0 4px var(--accent-glow); }
+.fee-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(215px,1fr)); gap:14px; margin-top:12px; }
+.fee-item{ background:#F8FAFC; border:1.5px solid var(--border); border-radius:var(--r-md); padding:14px; transition:var(--tr); }
+.fee-item:hover{ border-color:#93C5FD; background:#fff; box-shadow:var(--sh-sm); }
+.month-label{ display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:13px; margin-bottom:10px; }
+.status-badge{ font-size:10px; padding:3px 9px; border-radius:var(--r-full); font-weight:700; text-transform:uppercase; letter-spacing:.4px; }
+.status-badge.paid{ background:var(--green-soft); color:var(--green); border:1px solid #A7F3D0; }
+.status-badge.unpaid{ background:#F1F5F9; color:var(--muted); border:1px solid var(--border); }
 .fee-controls{ display:flex; gap:10px; align-items:center; }
-.fee-controls input[type="checkbox"]{ width:18px; height:18px; accent-color:var(--primary); cursor:pointer; }
-.fee-controls input[type="date"]{ flex:1; padding:7px 10px; border:1px solid var(--border); border-radius:8px; font-family:var(--font); font-size:13px; min-width:0; }
-.fee-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; padding-top:18px; border-top:1px solid var(--border); align-items:center; }
-.fee-notice{ padding:12px 16px; border-radius:var(--radius-md); font-weight:500; font-size:14px; display:flex; align-items:center; gap:10px; margin-bottom:14px; }
-.fee-notice.complete{ background:#D1FAE5; color:#065F46; border:1px solid #A7F3D0; }
-.fee-notice.warning{ background:#FEF3C7; color:#92400E; border:1px solid #FDE68A; }
-.fee-notice.info{ background:#E0E7FF; color:#3730A3; border:1px solid #C7D2FE; }
-
-.view-only-banner{ background:linear-gradient(135deg,#0F172A,#334155); color:white; padding:12px 16px; border-radius:var(--radius-md); text-align:center; font-size:14px; margin-bottom:18px; }
+.fee-controls input[type="checkbox"]{ width:17px; height:17px; accent-color:var(--accent); cursor:pointer; }
+.fee-controls input[type="date"]{ flex:1; padding:7px 9px; border:1px solid var(--border); border-radius:8px; font-family:var(--font); font-size:12px; min-width:0; background:#fff; }
+.fee-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; padding-top:18px; border-top:1px solid var(--border); align-items:center; }
+.fee-notice{ padding:12px 16px; border-radius:var(--r-md); font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.fee-notice.complete{ background:var(--green-soft); color:#065F46; border:1px solid #A7F3D0; }
+.fee-notice.warning{ background:var(--red-soft); color:#991B1B; border:1px solid #FECACA; }
+.fee-notice.info{ background:var(--accent-soft); color:#1E40AF; border:1px solid #BFDBFE; }
 
 /* TOAST */
 .toast-container{ position:fixed; bottom:24px; right:24px; z-index:99999; display:flex; flex-direction:column; gap:10px; max-width:360px; width:90%; }
-.toast{ background:white; padding:14px 16px; border-radius:var(--radius-md); box-shadow:var(--shadow-lg); border-left:4px solid var(--primary); display:flex; gap:12px; align-items:center; font-size:14px; font-weight:500; animation:slideIn .4s cubic-bezier(.32,.72,0,1); }
-.toast.success{ border-left-color:var(--success); }
-.toast.error{ border-left-color:var(--danger); }
-.toast i{ font-size:18px; }
-.toast.success i{ color:var(--success); }
-.toast.error i{ color:var(--danger); }
-.toast.hide{ animation:slideOut .3s ease forwards; }
-@keyframes slideIn{ from{ opacity:0; transform:translateX(30px);} to{ opacity:1; transform:translateX(0);} }
-@keyframes slideOut{ from{ opacity:1; transform:translateX(0);} to{ opacity:0; transform:translateX(30px);} }
+.toast{ background:#0F172A; color:#fff; padding:14px 16px; border-radius:var(--r-md); box-shadow:var(--sh-lg); display:flex; gap:12px; align-items:center; font-size:13px; font-weight:500; animation:toastIn .35s cubic-bezier(.4,0,.2,1); }
+.toast i{ font-size:16px; }
+.toast.success i{ color:#34D399; }
+.toast.error i{ color:#F87171; }
+.toast.hide{ animation:toastOut .3s ease forwards; }
+@keyframes toastIn{ from{ opacity:0; transform:translateY(16px);} to{ opacity:1; transform:translateY(0);} }
+@keyframes toastOut{ from{ opacity:1;} to{ opacity:0; transform:translateY(16px);} }
 
-.spinner{ width:16px; height:16px; border:2px solid rgba(255,255,255,.4); border-top-color:white; border-radius:50%; display:inline-block; animation:spin .7s linear infinite; }
+.spinner{ width:15px; height:15px; border:2px solid rgba(255,255,255,.35); border-top-color:#fff; border-radius:50%; display:inline-block; animation:spin .7s linear infinite; }
 @keyframes spin{ to{ transform:rotate(360deg);} }
 
 /* RESPONSIVE */
-@media(max-width:900px){ .login-wrapper{ grid-template-columns:1fr; } .login-branding{ padding:28px; } .brand-features{ display:none; } }
-@media(max-width:640px){
-  #app{ padding:12px; } .app-header{ top:0; }
-  .nav-tabs{ width:100%; overflow:auto; }
-  .tab-btn{ flex:1; justify-content:center; white-space:nowrap; }
+@media(max-width:880px){
+  .login-wrapper{ grid-template-columns:1fr; max-width:440px; }
+  .login-left{ display:none; }
+  .sidebar{ width:100%; height:auto; position:fixed; top:auto; bottom:0; left:0; right:0; flex-direction:row; align-items:center; padding:8px 12px; gap:6px; border-top:1px solid #1E293B; }
+  .sidebar .logo-row,.side-label,.sidebar-footer .user-info{ display:none; }
+  .nav-tabs{ flex-direction:row; flex:1; }
+  .tab-btn{ flex-direction:column; gap:4px; font-size:10px; padding:8px 4px; justify-content:center; align-items:center; }
+  .tab-btn i{ font-size:16px; }
+  .sidebar-footer{ margin:0; padding:0; border:none; }
+  .main{ margin-left:0; padding:0 16px 100px; }
   .stats-grid{ grid-template-columns:1fr 1fr; }
   .fee-grid{ grid-template-columns:1fr; }
-  .login-card{ padding:28px 20px; }
 }
-@media(max-width:400px){ .stats-grid{ grid-template-columns:1fr; } }
+@media(max-width:420px){ .stats-grid{ grid-template-columns:1fr; } .login-right{ padding:32px 22px; } }
 </style>
 </head>
 <body>
 
-<!-- ====== LOGIN SCREEN ====== -->
+<!-- ================= LOGIN ================= -->
 <div id="loginScreen">
-  <div class="login-bg-shapes"><div class="shape s1"></div><div class="shape s2"></div><div class="shape s3"></div></div>
+  <div class="login-grid-lines"></div>
   <div class="login-wrapper">
-    <div class="login-branding">
-      <div class="brand-top">
-        <i class="fas fa-graduation-cap"></i>
-        <h1>FeeManager<br>Pro</h1>
-        <p>Smart, calm & professional student fee tracking for modern schools.</p>
+    <div class="login-left">
+      <div>
+        <div class="logo-row"><div class="logo-mark"><i class="fas fa-building-columns"></i></div><span>FeeDesk</span></div>
+        <h1>Manage student fees, the smart way.</h1>
+        <p class="tagline">One clean dashboard for student records, monthly fee tracking and instant payment overview — synced live to the cloud.</p>
+        <div class="trust-list">
+          <div class="trust-item"><i class="fas fa-cloud-arrow-up"></i> Cloud synced — access from any device, anytime</div>
+          <div class="trust-item"><i class="fas fa-user-shield"></i> Secure role-based access for staff & students</div>
+          <div class="trust-item"><i class="fas fa-gauge-high"></i> Live statistics, dues & collection insights</div>
+        </div>
       </div>
-      <div class="brand-features">
-        <div class="feat"><i class="fas fa-bolt"></i> Real-time sync with Firebase</div>
-        <div class="feat"><i class="fas fa-shield-alt"></i> Teacher admin & Student view-only</div>
-        <div class="feat"><i class="fas fa-chart-line"></i> Instant stats & overdue alerts</div>
-      </div>
+      <div class="copyright">© 2025 FeeDesk · Built for modern institutes</div>
     </div>
-    <div class="login-card">
-      <h2 style="font-family:var(--font-display); font-size:22px;">Welcome back 👋</h2>
-      <p class="subtitle">Choose your role to continue</p>
-      <div class="role-divider">Select Role</div>
+    <div class="login-right">
+      <h2>Sign in to continue</h2>
+      <p class="sub">Select how you want to access the portal</p>
       <div class="role-buttons">
-        <button class="role-btn student" id="studentRoleBtn">
-          <i class="fas fa-user-graduate"></i>
-          <span class="label">Student</span>
-          <span class="badge-role">view only</span>
+        <button class="role-btn" id="studentRoleBtn">
+          <i class="fas fa-book-open-reader"></i>
+          <span class="label">Student Portal</span>
+          <span class="badge-role">Read-only access</span>
         </button>
-        <button class="role-btn teacher" id="teacherRoleBtn">
-          <i class="fas fa-chalkboard-teacher"></i>
-          <span class="label">Teacher</span>
-          <span class="badge-role">admin access</span>
+        <button class="role-btn" id="teacherRoleBtn">
+          <i class="fas fa-user-tie"></i>
+          <span class="label">Staff Portal</span>
+          <span class="badge-role">Full admin access</span>
         </button>
       </div>
       <div class="teacher-login-form" id="teacherLoginForm">
         <div class="field">
-          <label for="teacherId"><i class="fas fa-user"></i> Teacher ID</label>
-          <input type="text" id="teacherId" placeholder="Enter your ID" autocomplete="off"/>
+          <label for="teacherId">Staff ID</label>
+          <input type="text" id="teacherId" placeholder="Enter your staff ID" autocomplete="off"/>
         </div>
         <div class="field">
-          <label for="teacherPass"><i class="fas fa-lock"></i> Password</label>
-          <input type="password" id="teacherPass" placeholder="Enter password" autocomplete="off"/>
+          <label for="teacherPass">Password</label>
+          <input type="password" id="teacherPass" placeholder="••••••••" autocomplete="off"/>
         </div>
-        <button class="btn-login" id="teacherLoginBtn"><i class="fas fa-sign-in-alt"></i> Sign in as Teacher</button>
+        <button class="btn-login" id="teacherLoginBtn"><i class="fas fa-arrow-right-to-bracket"></i> Access Dashboard</button>
         <div class="login-error" id="loginError"></div>
       </div>
-      <button class="student-quick-btn" id="studentLoginBtn"><i class="fas fa-eye"></i> Continue as Student (View Only)</button>
-      <div class="footer-note">Teacher login: <strong>Ankush</strong> &nbsp;·&nbsp; Students view only</div>
+      <button class="student-quick-btn" id="studentLoginBtn"><i class="fas fa-eye"></i> Browse as Student</button>
+      <div class="footer-note">Authorized staff only · Contact admin <strong>Ankush</strong> for credentials</div>
     </div>
   </div>
 </div>
 
-<!-- ====== TOAST ====== -->
+<!-- ================= TOAST ================= -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- ====== MAIN APP ====== -->
+<!-- ================= APP ================= -->
 <div id="app">
-<div class="app-container">
+<div class="layout">
 
-  <header class="app-header">
-    <div class="brand"><i class="fas fa-graduation-cap"></i><h2>FeeManager</h2></div>
-    <div class="user-area">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo-row"><div class="logo-mark"><i class="fas fa-building-columns"></i></div><span>FeeDesk</span></div>
+    <div class="side-label">Menu</div>
+    <nav class="nav-tabs" id="navTabs">
+      <button class="tab-btn active" data-tab="dashboard"><i class="fas fa-house"></i> Overview</button>
+      <button class="tab-btn" data-tab="students"><i class="fas fa-user-group"></i> Students</button>
+      <button class="tab-btn" data-tab="fees"><i class="fas fa-file-invoice-dollar"></i> Fee Records</button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="avatar" id="userAvatar">U</div>
       <div class="user-info">
         <div class="name" id="userDisplayName">User</div>
-        <div><span class="role-tag" id="userRoleTag">Student</span></div>
+        <span class="role-tag" id="userRoleTag">Student</span>
       </div>
-      <div class="avatar" id="userAvatar">U</div>
-      <button class="btn-logout" id="logoutBtn" title="Sign out"><i class="fas fa-sign-out-alt"></i></button>
+      <button class="btn-logout" id="logoutBtn" title="Sign out"><i class="fas fa-arrow-right-from-bracket"></i></button>
     </div>
-  </header>
+  </aside>
 
-  <div id="viewOnlyBanner" class="view-only-banner" style="display:none;">
-    <i class="fas fa-eye"></i> You are in <strong>view-only</strong> mode. Only teachers can add, edit, or delete records.
-  </div>
-
-  <nav class="nav-tabs" id="navTabs">
-    <button class="tab-btn active" data-tab="dashboard"><i class="fas fa-chart-pie"></i> Dashboard</button>
-    <button class="tab-btn" data-tab="students"><i class="fas fa-users"></i> Students</button>
-    <button class="tab-btn" data-tab="fees"><i class="fas fa-coins"></i> Fees</button>
-  </nav>
-
-  <!-- DASHBOARD -->
-  <div class="tab-content active" id="tabDashboard">
-    <div class="dashboard-greeting">
-      <h3>Welcome, <span id="greetingName">User</span>!</h3>
-      <p id="greetingSub">Here's your fee overview at a glance.</p>
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="page-title">Fee Management Console</div>
+      <div class="date-chip"><i class="fas fa-calendar-day"></i> <span id="todayDate">—</span></div>
     </div>
-    <div class="stats-grid">
-      <div class="stat-card"><i class="fas fa-user-graduate stat-icon"></i><div class="stat-label">Total Students</div><div class="stat-number" id="statTotalStudents">0</div></div>
-      <div class="stat-card green"><i class="fas fa-check-circle stat-icon"></i><div class="stat-label">Fees Paid</div><div class="stat-number" id="statFeesPaid">0</div></div>
-      <div class="stat-card orange"><i class="fas fa-hourglass-half stat-icon"></i><div class="stat-label">Fees Pending</div><div class="stat-number" id="statFeesPending">0</div></div>
-      <div class="stat-card red"><i class="fas fa-exclamation-triangle stat-icon"></i><div class="stat-label">Overdue Months</div><div class="stat-number" id="statOverdue">0</div></div>
-    </div>
-    <div class="card-panel" style="margin-bottom:0;">
-      <p class="text-muted" style="font-weight:500;"><i class="fas fa-info-circle" style="color:var(--primary);"></i> Use the <strong>Students</strong> tab to manage students, and the <strong>Fees</strong> tab to mark monthly payments.</p>
-    </div>
-  </div>
 
-  <!-- STUDENTS -->
-  <div class="tab-content" id="tabStudents">
-    <div class="section-header"><h3><i class="fas fa-user-plus"></i> Manage Students</h3></div>
-    <div class="card-panel" id="addStudentPanel">
-      <h4 style="margin-bottom:16px; font-weight:600;"><i class="fas fa-plus-circle" style="color:var(--primary);"></i> Add New Student</h4>
-      <div class="form-row">
-        <div class="field"><label for="studentName">Full Name *</label><input type="text" id="studentName" placeholder="e.g. Ankush Saini"/></div>
-        <div class="field"><label for="studentClass">Class / Grade</label><input type="text" id="studentClass" placeholder="e.g. 10-A"/></div>
-        <div class="field"><label for="studentContact">Contact (optional)</label><input type="text" id="studentContact" placeholder="Phone or email"/></div>
-        <div class="field"><label for="joiningDate">Joining Date *</label><input type="date" id="joiningDate"/></div>
+    <div id="viewOnlyBanner" class="view-only-banner" style="display:none;">
+      <i class="fas fa-lock"></i> Read-only mode active — only staff members can add, edit or remove records.
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="tab-content active" id="tabDashboard">
+      <div class="dashboard-greeting">
+        <h3>Hello, <span id="greetingName">User</span> 👋</h3>
+        <p id="greetingSub">Here's a live snapshot of your institute's fee status.</p>
       </div>
-      <button class="btn-primary" id="addStudentBtn"><i class="fas fa-save"></i> Add Student</button>
-    </div>
-    <div class="card-panel">
-      <h4 style="margin-bottom:16px; font-weight:600;"><i class="fas fa-list" style="color:var(--primary);"></i> All Students <span style="font-weight:400; font-size:14px; color:var(--muted); margin-left:8px;" id="studentCount">(0)</span></h4>
-      <div class="table-wrapper">
-        <table class="student-table">
-          <thead><tr><th>#</th><th>Name</th><th>Class</th><th>Contact</th><th>Joining Date</th><th style="text-align:center;">Actions</th></tr></thead>
-          <tbody id="studentTableBody"><tr class="empty-row"><td colspan="6">No students added yet. Add one above!</td></tr></tbody>
-        </table>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-ico"><i class="fas fa-user-group"></i></div>
+          <div><div class="stat-label">Enrolled Students</div><div class="stat-number" id="statTotalStudents">0</div></div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-ico"><i class="fas fa-circle-check"></i></div>
+          <div><div class="stat-label">Payments Received</div><div class="stat-number" id="statFeesPaid">0</div></div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-ico"><i class="fas fa-clock"></i></div>
+          <div><div class="stat-label">Payments Due</div><div class="stat-number" id="statFeesPending">0</div></div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-ico"><i class="fas fa-triangle-exclamation"></i></div>
+          <div><div class="stat-label">Overdue Months</div><div class="stat-number" id="statOverdue">0</div></div>
+        </div>
+      </div>
+      <div class="progress-panel">
+        <div class="progress-head">
+          <span class="t"><i class="fas fa-chart-line" style="color:var(--accent); margin-right:8px;"></i>Collection Rate</span>
+          <span class="pct" id="collectionPct">0%</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="collectionBar"></div></div>
+        <div class="progress-hint">Percentage of all monthly fees marked as received across every student.</div>
+      </div>
+      <div class="card-panel" style="margin-bottom:0;">
+        <p class="text-muted"><i class="fas fa-circle-info" style="color:var(--accent); margin-right:8px;"></i>Head over to <strong>Students</strong> to manage enrollments, or open <strong>Fee Records</strong> to update monthly payments.</p>
       </div>
     </div>
-  </div>
 
-  <!-- FEES -->
-  <div class="tab-content" id="tabFees">
-    <div class="section-header"><h3><i class="fas fa-calendar-check"></i> Monthly Fees</h3></div>
-    <div class="card-panel">
-      <div class="fee-student-selector">
-        <label for="feeStudentSelect"><i class="fas fa-user" style="color:var(--primary);"></i> Select Student:</label>
-        <select id="feeStudentSelect"><option value="">— Choose a student —</option></select>
-        <span id="feeStudentInfo" class="text-muted" style="font-size:14px;"></span>
+    <!-- STUDENTS -->
+    <div class="tab-content" id="tabStudents">
+      <div class="card-panel" id="addStudentPanel">
+        <div class="panel-title"><i class="fas fa-user-plus"></i> Enroll New Student</div>
+        <div class="form-row">
+          <div class="field"><label for="studentName">Full Name *</label><input type="text" id="studentName" placeholder="e.g. Ankush Saini"/></div>
+          <div class="field"><label for="studentClass">Class / Batch</label><input type="text" id="studentClass" placeholder="e.g. 10-A"/></div>
+          <div class="field"><label for="studentContact">Contact Number</label><input type="text" id="studentContact" placeholder="Phone or email"/></div>
+          <div class="field"><label for="joiningDate">Admission Date *</label><input type="date" id="joiningDate"/></div>
+        </div>
+        <button class="btn-primary" id="addStudentBtn"><i class="fas fa-plus"></i> Enroll Student</button>
       </div>
-      <div id="feeNoticeContainer"></div>
-      <div id="feeGridContainer">
-        <p class="text-muted" style="padding:20px 0; text-align:center;"><i class="fas fa-arrow-up" style="color:var(--primary);"></i> Select a student above to manage their fees.</p>
-      </div>
-      <div class="fee-actions" id="feeActions" style="display:none;">
-        <button class="btn-primary" id="saveFeesBtn"><i class="fas fa-save"></i> Save All Changes</button>
-        <button class="btn-secondary" id="markAllPaidBtn"><i class="fas fa-check-double"></i> Mark All Paid</button>
-        <button class="btn-secondary" id="markAllUnpaidBtn"><i class="fas fa-times"></i> Mark All Unpaid</button>
-        <span style="margin-left:auto; font-size:13px; color:var(--muted);" id="feeLastSaved"></span>
+      <div class="card-panel">
+        <div class="panel-title"><i class="fas fa-address-book"></i> Student Directory <span class="text-muted" style="font-weight:500; margin-left:6px;" id="studentCount">(0)</span></div>
+        <div class="search-box">
+          <i class="fas fa-magnifying-glass"></i>
+          <input type="text" id="studentSearch" placeholder="Search by name, class or contact..."/>
+        </div>
+        <div class="table-wrapper">
+          <table class="student-table">
+            <thead><tr><th>#</th><th>Name</th><th>Class</th><th>Contact</th><th>Admission Date</th><th style="text-align:center;">Manage</th></tr></thead>
+            <tbody id="studentTableBody"><tr class="empty-row"><td colspan="6">No students enrolled yet. Use the form above to get started.</td></tr></tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </div>
 
+    <!-- FEES -->
+    <div class="tab-content" id="tabFees">
+      <div class="card-panel">
+        <div class="panel-title"><i class="fas fa-file-invoice-dollar"></i> Monthly Fee Ledger</div>
+        <div class="fee-student-selector">
+          <label for="feeStudentSelect">Student:</label>
+          <select id="feeStudentSelect"><option value="">— Select a student —</option></select>
+          <span id="feeStudentInfo" class="text-muted" style="font-size:13px;"></span>
+        </div>
+        <div id="feeNoticeContainer"></div>
+        <div id="feeGridContainer">
+          <p class="text-muted" style="padding:24px 0; text-align:center;"><i class="fas fa-hand-pointer" style="color:var(--accent); margin-right:6px;"></i>Select a student above to open their fee ledger.</p>
+        </div>
+        <div class="fee-actions" id="feeActions" style="display:none;">
+          <button class="btn-primary" id="saveFeesBtn"><i class="fas fa-cloud-arrow-up"></i> Save Changes</button>
+          <button class="btn-secondary" id="markAllPaidBtn"><i class="fas fa-check-double"></i> Mark Year Paid</button>
+          <button class="btn-secondary" id="markAllUnpaidBtn"><i class="fas fa-rotate-left"></i> Reset All</button>
+          <span style="margin-left:auto; font-size:12px; color:var(--muted);" id="feeLastSaved"></span>
+        </div>
+      </div>
+    </div>
+
+  </main>
 </div>
 </div>
 
@@ -376,7 +468,7 @@ body{ font-family: var(--font); background: var(--bg); color: var(--text); min-h
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-// ⚠️ YAHAN APNA FIREBASE CONFIG DAAL (Firebase Console > Project Settings > Your apps se copy kar)
+// ⚠️ Apna original Firebase config yahan paste kar (Firebase Console se)
 const firebaseConfig = {
   apiKey: "AIzaSyAlEbJb5TSun7jbZ6OBhVvpD9K7vcVbuk",
   authDomain: "ankushfee.firebaseapp.com",
@@ -386,7 +478,6 @@ const firebaseConfig = {
   appId: "1:237546458741:web:9f43ba73e42a4431eaf23c",
   measurementId: "G-8F02KS9XW1"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -415,14 +506,17 @@ const feeStudentSelect = $('feeStudentSelect'), feeGridContainer = $('feeGridCon
 const saveFeesBtn = $('saveFeesBtn'), markAllPaidBtn = $('markAllPaidBtn'), markAllUnpaidBtn = $('markAllUnpaidBtn');
 const feeLastSaved = $('feeLastSaved'), feeStudentInfo = $('feeStudentInfo'), feeNoticeContainer = $('feeNoticeContainer');
 
-const EMPTY_FEE_MSG = '<p class="text-muted" style="padding:20px 0;text-align:center;"><i class="fas fa-arrow-up" style="color:var(--primary);"></i> Select a student above to manage their fees.</p>';
+const EMPTY_FEE_MSG = '<p class="text-muted" style="padding:24px 0; text-align:center;"><i class="fas fa-hand-pointer" style="color:var(--accent); margin-right:6px;"></i>Select a student above to open their fee ledger.</p>';
+
+// Live date (UI addition)
+$('todayDate').textContent = new Date().toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
 
 // ===== 3. TOAST =====
 function showToast(message, type = 'success') {
   const container = $('toastContainer');
   const toast = document.createElement('div');
   toast.className = 'toast ' + type;
-  const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+  const icon = type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation';
   toast.innerHTML = '<i class="fas ' + icon + '"></i> ' + message;
   container.appendChild(toast);
   setTimeout(() => { toast.classList.add('hide'); setTimeout(() => toast.remove(), 400); }, 3200);
@@ -435,7 +529,6 @@ function loginAs(role) {
   appEl.classList.add('visible');
   renderApp(role);
 }
-
 function logout() {
   currentUser = null;
   loginScreen.classList.remove('hidden');
@@ -458,7 +551,6 @@ studentRoleBtn.addEventListener('click', () => {
   loginError.textContent = '';
   loginAs('student');
 });
-
 teacherRoleBtn.addEventListener('click', () => {
   teacherRoleBtn.classList.add('active-role');
   studentRoleBtn.classList.remove('active-role');
@@ -466,9 +558,7 @@ teacherRoleBtn.addEventListener('click', () => {
   loginError.textContent = '';
   teacherId.focus();
 });
-
 studentLoginBtn.addEventListener('click', () => loginAs('student'));
-
 teacherLoginBtn.addEventListener('click', () => {
   const id = teacherId.value.trim();
   const pass = teacherPass.value.trim();
@@ -476,12 +566,11 @@ teacherLoginBtn.addEventListener('click', () => {
     loginError.textContent = '';
     loginAs('teacher');
   } else {
-    loginError.textContent = 'Invalid ID or Password. Try again.';
+    loginError.textContent = 'Incorrect Staff ID or Password.';
     teacherPass.value = '';
     teacherPass.focus();
   }
 });
-
 teacherPass.addEventListener('keydown', (e) => { if (e.key === 'Enter') teacherLoginBtn.click(); });
 logoutBtn.addEventListener('click', logout);
 
@@ -535,20 +624,20 @@ function listenToStudents() {
         feeNoticeContainer.innerHTML = '';
       }
     }
-  }, (error) => { showToast('Firestore error: ' + error.message, 'error'); });
+  }, (error) => { showToast('Cloud sync error: ' + error.message, 'error'); });
 }
 
 // ===== 6. RENDER APP =====
 function renderApp(role) {
   const isTeacher = role === 'teacher';
-  const displayName = isTeacher ? 'Teacher' : 'Student';
+  const displayName = isTeacher ? 'Ankush (Staff)' : 'Student';
   userDisplayName.textContent = displayName;
-  userRoleTag.textContent = isTeacher ? 'Teacher' : 'Student';
+  userRoleTag.textContent = isTeacher ? 'Administrator' : 'Viewer';
   userRoleTag.className = 'role-tag' + (isTeacher ? '' : ' student-role');
-  userAvatar.textContent = isTeacher ? 'T' : 'S';
-  greetingName.textContent = displayName;
-  greetingSub.textContent = isTeacher ? 'You have full access to manage students and fees.' : 'You are in view-only mode. Browse all records.';
-  viewOnlyBanner.style.display = isTeacher ? 'none' : 'block';
+  userAvatar.textContent = isTeacher ? 'A' : 'S';
+  greetingName.textContent = isTeacher ? 'Ankush' : 'Student';
+  greetingSub.textContent = isTeacher ? "You're signed in with full admin rights. Manage enrollments and fee records freely." : "You're browsing in read-only mode. All records are visible but locked for editing.";
+  viewOnlyBanner.style.display = isTeacher ? 'none' : 'flex';
   enableEditing(isTeacher);
   seedIfEmpty().then(() => listenToStudents());
   selectedStudentId = null; feeData = {};
@@ -567,7 +656,7 @@ function enableEditing(enabled) {
   saveFeesBtn.disabled = !enabled;
   markAllPaidBtn.disabled = !enabled;
   markAllUnpaidBtn.disabled = !enabled;
-  addStudentBtn.innerHTML = enabled ? '<i class="fas fa-save"></i> Add Student' : '<i class="fas fa-lock"></i> Add Student (View Only)';
+  addStudentBtn.innerHTML = enabled ? '<i class="fas fa-plus"></i> Enroll Student' : '<i class="fas fa-lock"></i> Staff Only';
 }
 
 // ===== 7. TABS =====
@@ -589,45 +678,57 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 function renderStudentTable() {
   const isTeacher = currentUser === 'teacher';
   if (!studentsList.length) {
-    studentTableBody.innerHTML = '<tr class="empty-row"><td colspan="6">No students added yet. Add one above!</td></tr>';
+    studentTableBody.innerHTML = '<tr class="empty-row"><td colspan="6">No students enrolled yet. Use the form above to get started.</td></tr>';
     studentCount.textContent = '(0)';
     return;
   }
   let html = '';
   studentsList.forEach((s, idx) => {
-    const joinDate = s.joiningDate ? new Date(s.joiningDate).toLocaleDateString() : '—';
+    const joinDate = s.joiningDate ? new Date(s.joiningDate).toLocaleDateString('en-IN') : '—';
     html += '<tr>'
-      + '<td>' + (idx + 1) + '</td>'
+      + '<td style="color:var(--muted);">' + (idx + 1) + '</td>'
       + '<td><strong>' + escapeHtml(s.name || '—') + '</strong></td>'
       + '<td>' + escapeHtml(s.class || '—') + '</td>'
       + '<td>' + escapeHtml(s.contact || '—') + '</td>'
       + '<td>' + joinDate + '</td>'
       + '<td style="text-align:center;"><div class="actions" style="justify-content:center;">'
-      + '<button class="btn-danger" onclick="window.deleteStudent(\'' + s.id + '\')"' + (isTeacher ? '' : ' disabled style="opacity:0.4;cursor:not-allowed;"') + '>'
-      + '<i class="fas fa-trash-alt"></i> Delete</button></div></td></tr>';
+      + '<button class="btn-danger" onclick="window.deleteStudent(\'' + s.id + '\')"' + (isTeacher ? '' : ' disabled') + '>'
+      + '<i class="fas fa-trash-can"></i> Remove</button></div></td></tr>';
   });
   studentTableBody.innerHTML = html;
   studentCount.textContent = '(' + studentsList.length + ')';
+  applySearchFilter();
 }
 
+// Search filter (UI addition — DOM only, no logic change)
+const studentSearch = $('studentSearch');
+function applySearchFilter() {
+  const term = (studentSearch.value || '').toLowerCase().trim();
+  document.querySelectorAll('#studentTableBody tr').forEach(row => {
+    if (row.classList.contains('empty-row')) return;
+    row.style.display = !term || row.textContent.toLowerCase().includes(term) ? '' : 'none';
+  });
+}
+studentSearch.addEventListener('input', applySearchFilter);
+
 window.deleteStudent = async function(id) {
-  if (currentUser !== 'teacher') { showToast('Only teachers can delete students.', 'error'); return; }
+  if (currentUser !== 'teacher') { showToast('Only staff members can remove students.', 'error'); return; }
   const student = studentsList.find(s => s.id === id);
   if (!student) return;
-  if (!confirm('Delete "' + student.name + '" and all their fee records?')) return;
+  if (!confirm('Remove "' + student.name + '" along with all fee records? This cannot be undone.')) return;
   try {
     await deleteDoc(doc(db, 'students', id));
-    showToast('Student deleted.');
-  } catch (err) { showToast('Error deleting: ' + err.message, 'error'); }
+    showToast('Student record removed.');
+  } catch (err) { showToast('Delete failed: ' + err.message, 'error'); }
 };
 
 function populateStudentSelect() {
   const currentVal = feeStudentSelect.value;
-  feeStudentSelect.innerHTML = '<option value="">— Choose a student —</option>';
+  feeStudentSelect.innerHTML = '<option value="">— Select a student —</option>';
   studentsList.forEach(s => {
     const opt = document.createElement('option');
     opt.value = s.id;
-    opt.textContent = (s.name || 'Unnamed') + (s.class ? ' - ' + s.class : '');
+    opt.textContent = (s.name || 'Unnamed') + (s.class ? ' · ' + s.class : '');
     feeStudentSelect.appendChild(opt);
   });
   if (currentVal && studentsList.some(s => s.id === currentVal)) {
@@ -639,26 +740,26 @@ function populateStudentSelect() {
 }
 
 addStudentBtn.addEventListener('click', async () => {
-  if (currentUser !== 'teacher') { showToast('Only teachers can add students.', 'error'); return; }
+  if (currentUser !== 'teacher') { showToast('Only staff members can enroll students.', 'error'); return; }
   const name = studentName.value.trim();
-  if (!name) { showToast('Please enter a student name.', 'error'); return; }
+  if (!name) { showToast('Student name is required.', 'error'); return; }
   const cls = studentClass.value.trim() || '';
   const contact = studentContact.value.trim() || '';
   const joinDateVal = joiningDate.value;
-  if (!joinDateVal) { showToast('Please select a joining date.', 'error'); return; }
+  if (!joinDateVal) { showToast('Please choose an admission date.', 'error'); return; }
   try {
     addStudentBtn.disabled = true;
-    addStudentBtn.innerHTML = '<span class="spinner"></span> Adding...';
+    addStudentBtn.innerHTML = '<span class="spinner"></span> Enrolling...';
     const fees = {};
     MONTHS.forEach(m => { fees[m] = { paid: false, date: null }; });
     await addDoc(collection(db, 'students'), { name, class: cls, contact, joiningDate: joinDateVal, fees });
-    showToast('Student "' + name + '" added successfully!');
+    showToast('"' + name + '" enrolled successfully!');
     studentName.value = ''; studentClass.value = ''; studentContact.value = ''; joiningDate.value = '';
   } catch (err) {
-    showToast('Error adding student: ' + err.message, 'error');
+    showToast('Enrollment failed: ' + err.message, 'error');
   } finally {
     addStudentBtn.disabled = false;
-    addStudentBtn.innerHTML = '<i class="fas fa-save"></i> Add Student';
+    addStudentBtn.innerHTML = '<i class="fas fa-plus"></i> Enroll Student';
   }
 });
 
@@ -675,14 +776,14 @@ feeStudentSelect.addEventListener('change', () => {
   }
   selectedStudentId = id;
   const student = studentsList.find(s => s.id === id);
-  feeStudentInfo.textContent = student ? (student.name || 'Unnamed') : '';
+  feeStudentInfo.textContent = student ? ('Viewing ledger of ' + (student.name || 'Unnamed')) : '';
   loadFeeData(id);
 });
 
 function loadFeeData(studentId) {
   const student = studentsList.find(s => s.id === studentId);
   if (!student) {
-    feeGridContainer.innerHTML = '<p class="text-muted" style="padding:20px 0;text-align:center;">Student not found.</p>';
+    feeGridContainer.innerHTML = '<p class="text-muted" style="padding:24px 0;text-align:center;">Student record not found.</p>';
     feeActions.style.display = 'none';
     feeNoticeContainer.innerHTML = '';
     return;
@@ -690,7 +791,7 @@ function loadFeeData(studentId) {
   feeData = student.fees;
   renderFeeGrid();
   feeActions.style.display = 'flex';
-  feeLastSaved.textContent = 'Loaded from cloud';
+  feeLastSaved.textContent = 'Synced from cloud';
   enableEditing(currentUser === 'teacher');
   showFeeNotice(student);
 }
@@ -704,7 +805,7 @@ function renderFeeGrid() {
     const paid = entry.paid || false;
     const dateVal = entry.date || '';
     const statusClass = paid ? 'paid' : 'unpaid';
-    const statusText = paid ? 'Paid' : 'Pending';
+    const statusText = paid ? 'Received' : 'Due';
     const disabledAttr = !isTeacher ? 'disabled' : '';
     html += '<div class="fee-item" data-month="' + m + '">'
       + '<div class="month-label"><span>' + MONTH_LABELS[m] + '</span>'
@@ -757,8 +858,8 @@ function updateFeeUI(month) {
   if (!entry) return;
   const badge = document.querySelector('.fee-item[data-month="' + month + '"] .status-badge');
   if (badge) {
-    if (entry.paid) { badge.textContent = 'Paid'; badge.className = 'status-badge paid'; }
-    else { badge.textContent = 'Pending'; badge.className = 'status-badge unpaid'; }
+    if (entry.paid) { badge.textContent = 'Received'; badge.className = 'status-badge paid'; }
+    else { badge.textContent = 'Due'; badge.className = 'status-badge unpaid'; }
   }
   updateStats();
   const student = studentsList.find(s => s.id === selectedStudentId);
@@ -774,22 +875,22 @@ function showFeeNotice(student) {
   const allPaid = MONTHS.every(m => feeData[m] && feeData[m].paid);
   let message = '', type = '';
   if (monthsSince >= 12 && allPaid) {
-    message = 'Fee cycle complete! All 12 months have been paid.'; type = 'complete';
+    message = 'Annual fee cycle complete — all 12 months received. Great job!'; type = 'complete';
   } else if (monthsSince >= 12 && !allPaid) {
     const pending = MONTHS.filter(m => !feeData[m] || !feeData[m].paid);
-    message = 'Fee cycle completed (12 months). Pending months: ' + pending.map(m => MONTH_LABELS[m]).join(', ') + '. Please pay.';
+    message = 'Annual cycle over with dues pending: ' + pending.map(m => MONTH_LABELS[m]).join(', ') + '. Please follow up.';
     type = 'warning';
   } else {
     const remaining = 12 - monthsSince;
-    if (remaining > 0) { message = 'Fee cycle: ' + remaining + ' month(s) remaining from joining date.'; type = 'info'; }
-    else { message = 'Fee cycle completed.'; type = 'info'; }
+    if (remaining > 0) { message = remaining + ' month(s) left in this student\'s annual fee cycle.'; type = 'info'; }
+    else { message = 'Annual fee cycle completed.'; type = 'info'; }
   }
-  const iconClass = type === 'complete' ? 'fa-check-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+  const iconClass = type === 'complete' ? 'fa-circle-check' : type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-info';
   container.innerHTML = '<div class="fee-notice ' + type + '"><i class="fas ' + iconClass + '"></i> ' + message + '</div>';
 }
 
 saveFeesBtn.addEventListener('click', async () => {
-  if (currentUser !== 'teacher') { showToast('Only teachers can save changes.', 'error'); return; }
+  if (currentUser !== 'teacher') { showToast('Only staff members can save changes.', 'error'); return; }
   if (!selectedStudentId) { showToast('No student selected.', 'error'); return; }
   document.querySelectorAll('.fee-checkbox').forEach(cb => {
     const month = cb.dataset.month;
@@ -803,33 +904,33 @@ saveFeesBtn.addEventListener('click', async () => {
     saveFeesBtn.disabled = true;
     saveFeesBtn.innerHTML = '<span class="spinner"></span> Saving...';
     await updateDoc(doc(db, 'students', selectedStudentId), { fees: feeData });
-    showToast('Fees saved successfully!');
-    feeLastSaved.textContent = 'Saved at ' + new Date().toLocaleTimeString();
+    showToast('Fee ledger saved to cloud!');
+    feeLastSaved.textContent = 'Saved · ' + new Date().toLocaleTimeString();
   } catch (err) {
-    showToast('Error saving fees: ' + err.message, 'error');
+    showToast('Save failed: ' + err.message, 'error');
   } finally {
     saveFeesBtn.disabled = false;
-    saveFeesBtn.innerHTML = '<i class="fas fa-save"></i> Save All Changes';
+    saveFeesBtn.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> Save Changes';
   }
 });
 
 markAllPaidBtn.addEventListener('click', () => {
-  if (currentUser !== 'teacher') { showToast('Only teachers can do this.', 'error'); return; }
+  if (currentUser !== 'teacher') { showToast('Only staff members can do this.', 'error'); return; }
   if (!selectedStudentId) return;
   const today = new Date().toISOString().split('T')[0];
   MONTHS.forEach(m => { if (feeData[m]) { feeData[m].paid = true; feeData[m].date = today; } });
   renderFeeGrid();
   feeLastSaved.textContent = 'Unsaved changes — click Save';
-  showToast('All months marked as paid. Don\'t forget to save!');
+  showToast('All 12 months marked as received. Remember to save!');
 });
 
 markAllUnpaidBtn.addEventListener('click', () => {
-  if (currentUser !== 'teacher') { showToast('Only teachers can do this.', 'error'); return; }
+  if (currentUser !== 'teacher') { showToast('Only staff members can do this.', 'error'); return; }
   if (!selectedStudentId) return;
   MONTHS.forEach(m => { if (feeData[m]) { feeData[m].paid = false; feeData[m].date = null; } });
   renderFeeGrid();
   feeLastSaved.textContent = 'Unsaved changes — click Save';
-  showToast('All months marked as unpaid. Don\'t forget to save!');
+  showToast('Ledger reset. Remember to save!');
 });
 
 // ===== 10. STATS =====
@@ -855,6 +956,12 @@ function updateStats() {
   statFeesPaid.textContent = paidCount;
   statFeesPending.textContent = pendingCount;
   statOverdue.textContent = overdueCount;
+
+  // Collection rate bar (UI addition)
+  const totalSlots = paidCount + pendingCount;
+  const pct = totalSlots ? Math.round((paidCount / totalSlots) * 100) : 0;
+  $('collectionPct').textContent = pct + '%';
+  $('collectionBar').style.width = pct + '%';
 }
 
 // ===== 11. UTILITY =====
@@ -868,10 +975,20 @@ function escapeHtml(str) {
 // ===== 12. INIT =====
 loginScreen.classList.remove('hidden');
 appEl.classList.remove('visible');
-console.log('✅ Fee Manager Pro loaded. Teacher: Ankush / Ankush123@');
+console.log('✅ FeeDesk loaded. Staff: Ankush / Ankush123@');
 </script>
 </body>
 </html>
+```
 
+### Summary of changes:
+| Purana | Naya |
+|---|---|
+| Top tabs | **Left sidebar** (mobile pe bottom bar ban jata hai) |
+| "Fee Manager" | **"FeeDesk"** branding |
+| Student/Teacher | **Student Portal / Staff Portal** |
+| Paid/Pending badge | **Received / Due** |
+| Mark All Paid | **Mark Year Paid** |
+| — | **Search box**, **Collection Rate bar**, **Live date** ✨ |
 
-
+Login same hai: `Ankush` / `Ankush123@`. Firebase config wali line pe apna original config check kar lena. Test karke bata! 🚀
