@@ -1,476 +1,663 @@
-Ho gaya bhai! 💪 Maine pura UI **corporate admin dashboard style** me redesign kar diya hai - jaise professional SaaS websites hoti hain (Stripe, Notion type). Logic bilkul same hai, sirf design badla hai.
-
-### Naya kya hai:
-- 🎯 **Sidebar Navigation** - left side dark sidebar (pro dashboards jaisa)
-- 🔍 **Student Search Box** - table me naam se search kar sakte ho (naya feature)
-- 📊 **Collection Rate Progress Bar** - dashboard pe % ke sath (naya feature)
-- 📅 **Live Date Display** - topbar me aaj ki date (naya feature)
-- ✨ Naye icons, naye text labels, professional buttons
-
-```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>FeeDesk — Student Fee Management</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 <style>
-*{ margin:0; padding:0; box-sizing:border-box; }
+/* ==================== TOKENS ==================== */
+*{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --sidebar:#0F172A; --sidebar-hover:#1E293B; --sidebar-text:#94A3B8;
-  --bg:#F1F5F9; --card:#FFFFFF;
-  --text:#0F172A; --muted:#64748B;
-  --border:#E2E8F0;
-  --accent:#2563EB; --accent-dark:#1D4ED8; --accent-soft:#EFF6FF; --accent-glow:rgba(37,99,235,.15);
-  --teal:#0D9488; --green:#059669; --green-soft:#ECFDF5;
-  --amber:#D97706; --amber-soft:#FFFBEB;
-  --red:#DC2626; --red-soft:#FEF2F2;
-  --sh-sm:0 1px 3px rgba(15,23,42,.06);
-  --sh-md:0 4px 16px rgba(15,23,42,.08);
-  --sh-lg:0 24px 48px rgba(15,23,42,.14);
-  --r-lg:16px; --r-md:10px; --r-full:999px;
-  --tr:all .3s cubic-bezier(.4,0,.2,1);
-  --font:'Inter',system-ui,sans-serif;
+  --bg:#F6F7FB; --surface:#FFFFFF; --surface-2:#FBFCFE; --surface-3:#F1F4F9;
+  --text:#0B1220; --text-2:#475569; --text-3:#94A3B8;
+  --line:#E6EAF2; --line-2:#D7DEEA;
+  --brand:#4F46E5; --brand-2:#6366F1; --brand-soft:#EEF0FF; --brand-ring:rgba(79,70,229,.14);
+  --ok:#059669; --ok-soft:#E7F7F0;
+  --warn:#D97706; --warn-soft:#FEF4E6;
+  --bad:#DC2626; --bad-soft:#FEECEC;
+  --info:#0891B2; --info-soft:#E6F7FB;
+  --sh-1:0 1px 2px rgba(11,18,32,.04);
+  --sh-2:0 4px 16px rgba(11,18,32,.06);
+  --sh-3:0 18px 48px rgba(11,18,32,.14);
+  --r-lg:16px; --r-md:11px; --r-sm:8px; --r-full:999px;
+  --ease:cubic-bezier(.32,.72,0,1);
+  --t:.28s var(--ease);
+  --sidebar:248px;
+  --f:'Inter',system-ui,sans-serif;
+  --fd:'Plus Jakarta Sans','Inter',sans-serif;
 }
-html{ scroll-behavior:smooth; }
-body{ font-family:var(--font); background:var(--bg); color:var(--text); min-height:100vh; -webkit-font-smoothing:antialiased; }
-::-webkit-scrollbar{ width:6px; height:6px; }
-::-webkit-scrollbar-thumb{ background:#CBD5E1; border-radius:10px; }
-::-webkit-scrollbar-thumb:hover{ background:#94A3B8; }
-
-/* ===================== LOGIN ===================== */
-#loginScreen{
-  position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center;
-  background:#0F172A;
-  background-image:
-    radial-gradient(800px 400px at 80% -10%, rgba(37,99,235,.25), transparent 60%),
-    radial-gradient(700px 400px at 10% 110%, rgba(13,148,136,.18), transparent 60%);
-  padding:24px; transition:opacity .5s ease, transform .5s ease;
+[data-theme="dark"]{
+  --bg:#080B14; --surface:#0F1420; --surface-2:#131926; --surface-3:#1A2130;
+  --text:#EEF2F8; --text-2:#94A3B8; --text-3:#64748B;
+  --line:#1E2635; --line-2:#2A3446;
+  --brand:#6366F1; --brand-2:#818CF8; --brand-soft:#1A1F3D; --brand-ring:rgba(99,102,241,.22);
+  --ok:#34D399; --ok-soft:#0D2A22;
+  --warn:#FBBF24; --warn-soft:#2E2210;
+  --bad:#F87171; --bad-soft:#31161A;
+  --info:#22D3EE; --info-soft:#0C2830;
+  --sh-1:0 1px 2px rgba(0,0,0,.3); --sh-2:0 4px 16px rgba(0,0,0,.35); --sh-3:0 18px 48px rgba(0,0,0,.55);
 }
-#loginScreen.hidden{ opacity:0; transform:scale(1.03); pointer-events:none; }
-.login-grid-lines{ position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px); background-size:48px 48px; pointer-events:none; }
-.login-wrapper{
-  position:relative; z-index:2; display:grid; grid-template-columns:1fr 1fr;
-  max-width:960px; width:100%; border-radius:20px; overflow:hidden;
-  box-shadow:var(--sh-lg); animation:rise .6s cubic-bezier(.4,0,.2,1);
+html{scroll-behavior:smooth}
+body{font-family:var(--f);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .3s ease,color .3s ease}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:var(--text-3)}
+button,input,select{font-family:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+/* ==================== LOGIN ==================== */
+#loginScreen{position:fixed;inset:0;z-index:9000;display:grid;grid-template-columns:1.05fr .95fr;background:var(--surface);transition:opacity .55s var(--ease),transform .55s var(--ease),visibility 0s linear 0s}
+#loginScreen.hidden{opacity:0;visibility:hidden;transform:scale(1.015);pointer-events:none;transition:opacity .55s var(--ease),transform .55s var(--ease),visibility 0s linear .55s}
+.auth-visual{position:relative;overflow:hidden;background:linear-gradient(160deg,#1E1B4B 0%,#312E81 42%,#4F46E5 100%);color:#fff;padding:52px 56px;display:flex;flex-direction:column;justify-content:space-between}
+.auth-visual::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse at 30% 10%,#000 20%,transparent 75%)}
+.orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.42;animation:drift 14s ease-in-out infinite alternate}
+.orb-a{width:340px;height:340px;background:#818CF8;top:-90px;right:-70px}
+.orb-b{width:300px;height:300px;background:#22D3EE;bottom:-80px;left:-60px;animation-delay:-7s}
+@keyframes drift{to{transform:translate(28px,-34px) scale(1.14)}}
+.av-top{position:relative;z-index:2}
+.av-mark{display:inline-flex;align-items:center;gap:11px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:9px 15px 9px 11px;border-radius:var(--r-full);backdrop-filter:blur(8px);font-weight:700;font-size:14px;letter-spacing:.2px}
+.av-mark i{width:26px;height:26px;display:grid;place-items:center;background:#fff;color:#4338CA;border-radius:7px;font-size:13px}
+.av-mid{position:relative;z-index:2;margin:40px 0}
+.av-mid h1{font-family:var(--fd);font-size:clamp(30px,3.4vw,46px);line-height:1.08;letter-spacing:-1.4px;font-weight:800}
+.av-mid h1 em{font-style:normal;background:linear-gradient(100deg,#A5B4FC,#67E8F9);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.av-mid p{margin-top:16px;font-size:15.5px;line-height:1.72;color:rgba(255,255,255,.76);max-width:430px}
+.av-stats{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px}
+.av-stat{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:var(--r-md);padding:15px 14px;backdrop-filter:blur(8px)}
+.av-stat b{display:block;font-family:var(--fd);font-size:20px;font-weight:800}
+.av-stat span{font-size:11.5px;color:rgba(255,255,255,.62);letter-spacing:.3px}
+.av-foot{position:relative;z-index:2;display:flex;gap:22px;font-size:12.5px;color:rgba(255,255,255,.6)}
+.av-foot span{display:flex;align-items:center;gap:7px}
+
+.auth-panel{display:flex;align-items:center;justify-content:center;padding:44px 32px;background:var(--surface);overflow-y:auto}
+.auth-box{width:100%;max-width:392px;animation:riseIn .65s var(--ease)}
+@keyframes riseIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.auth-box h2{font-family:var(--fd);font-size:25px;font-weight:700;letter-spacing:-.5px}
+.auth-box .lead{color:var(--text-2);font-size:14.5px;margin-top:7px;line-height:1.6}
+.seg-label{font-size:11px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--text-3);margin:28px 0 11px}
+.role-buttons{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.role-btn{position:relative;padding:17px 13px;border:1.5px solid var(--line);border-radius:var(--r-md);background:var(--surface-2);cursor:pointer;transition:var(--t);display:flex;flex-direction:column;align-items:flex-start;gap:9px;text-align:left;overflow:hidden}
+.role-btn i{width:34px;height:34px;display:grid;place-items:center;border-radius:9px;background:var(--surface-3);color:var(--text-2);font-size:14px;transition:var(--t)}
+.role-btn .label{font-weight:700;font-size:14.5px;color:var(--text)}
+.role-btn .badge-role{font-size:11.5px;color:var(--text-3);line-height:1.35}
+.role-btn:hover{border-color:var(--line-2);transform:translateY(-2px);box-shadow:var(--sh-2)}
+.role-btn.active-role{border-color:var(--brand);background:var(--brand-soft);box-shadow:0 0 0 4px var(--brand-ring)}
+.role-btn.active-role i{background:var(--brand);color:#fff}
+.role-btn::after{content:'\f00c';font-family:'Font Awesome 6 Free';font-weight:900;position:absolute;top:11px;right:12px;font-size:10px;color:var(--brand);opacity:0;transform:scale(.4);transition:var(--t)}
+.role-btn.active-role::after{opacity:1;transform:scale(1)}
+
+.teacher-login-form{display:none;margin-top:22px}
+.teacher-login-form.show{display:block;animation:riseIn .38s var(--ease)}
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.field label{font-size:12.5px;font-weight:600;color:var(--text-2);display:flex;align-items:center;gap:7px}
+.field label i{font-size:11px;color:var(--text-3)}
+.inp{padding:12px 14px;border:1.5px solid var(--line);border-radius:var(--r-md);font-size:14.5px;background:var(--surface-2);color:var(--text);transition:var(--t);outline:none;width:100%}
+.inp::placeholder{color:var(--text-3)}
+.inp:focus{border-color:var(--brand);background:var(--surface);box-shadow:0 0 0 4px var(--brand-ring)}
+.inp:disabled{opacity:.5;cursor:not-allowed}
+.pass-wrap{position:relative}
+.pass-wrap .inp{padding-right:44px}
+.pass-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:32px;height:32px;border:none;background:transparent;color:var(--text-3);cursor:pointer;border-radius:7px;transition:var(--t)}
+.pass-eye:hover{color:var(--brand);background:var(--surface-3)}
+.login-error{color:var(--bad);font-size:12.5px;min-height:19px;margin-top:9px;font-weight:500;display:flex;align-items:center;gap:6px}
+.login-error:not(:empty)::before{content:'\f06a';font-family:'Font Awesome 6 Free';font-weight:900}
+.or-split{display:flex;align-items:center;gap:13px;margin:22px 0;color:var(--text-3);font-size:11px;font-weight:600;letter-spacing:.8px}
+.or-split::before,.or-split::after{content:'';flex:1;height:1px;background:var(--line)}
+.hint-box{margin-top:22px;background:var(--surface-2);border:1px dashed var(--line-2);border-radius:var(--r-md);padding:13px 15px;font-size:12.5px;color:var(--text-2);display:flex;gap:11px;line-height:1.6}
+.hint-box i{color:var(--brand);margin-top:2px}
+.hint-box code{background:var(--surface-3);padding:1.5px 6px;border-radius:5px;font-size:11.5px;font-weight:600;color:var(--text)}
+
+/* ==================== BUTTONS ==================== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1.5px solid transparent;border-radius:var(--r-md);font-weight:600;font-size:14px;cursor:pointer;transition:var(--t);padding:11px 19px;white-space:nowrap;line-height:1}
+.btn:disabled{opacity:.48;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+.btn-brand{background:var(--brand);color:#fff;box-shadow:0 5px 16px var(--brand-ring)}
+.btn-brand:hover:not(:disabled){background:var(--brand-2);transform:translateY(-1.5px);box-shadow:0 10px 24px var(--brand-ring)}
+.btn-brand:active:not(:disabled){transform:translateY(0) scale(.985)}
+.btn-ghost{background:var(--surface);border-color:var(--line);color:var(--text)}
+.btn-ghost:hover:not(:disabled){background:var(--surface-3);border-color:var(--line-2)}
+.btn-soft{background:var(--surface-3);color:var(--text-2)}
+.btn-soft:hover:not(:disabled){background:var(--line);color:var(--text)}
+.btn-bad{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+.btn-bad:hover:not(:disabled){background:var(--bad);color:#fff}
+.btn-block{width:100%}
+.btn-sm{padding:7.5px 13px;font-size:12.5px;border-radius:var(--r-sm)}
+.btn-ico{width:37px;height:37px;padding:0;border-radius:var(--r-md);background:var(--surface);border:1.5px solid var(--line);color:var(--text-2)}
+.btn-ico:hover{background:var(--surface-3);color:var(--text);border-color:var(--line-2)}
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.32);border-top-color:#fff;border-radius:50%;display:inline-block;animation:spin .65s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ==================== APP SHELL ==================== */
+#app{display:none;opacity:0;transition:opacity .45s var(--ease)}
+#app.visible{display:block;opacity:1}
+.shell{display:flex;min-height:100vh}
+
+.sidebar{width:var(--sidebar);flex-shrink:0;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:60;transition:transform var(--t)}
+.sb-brand{padding:21px 20px;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--line)}
+.sb-brand .mk{width:36px;height:36px;border-radius:10px;background:linear-gradient(140deg,var(--brand),var(--info));color:#fff;display:grid;place-items:center;font-size:15px;box-shadow:0 5px 14px var(--brand-ring)}
+.sb-brand h2{font-family:var(--fd);font-size:16.5px;font-weight:800;letter-spacing:-.4px;line-height:1.15}
+.sb-brand small{display:block;font-size:10.5px;color:var(--text-3);font-weight:500;letter-spacing:.3px}
+.sb-scroll{flex:1;overflow-y:auto;padding:16px 12px}
+.sb-cap{font-size:10.5px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--text-3);padding:0 9px;margin:6px 0 9px}
+.nav-item{width:100%;display:flex;align-items:center;gap:12px;padding:10.5px 12px;border:none;background:transparent;border-radius:var(--r-md);color:var(--text-2);font-size:14px;font-weight:600;cursor:pointer;transition:var(--t);position:relative;margin-bottom:3px;text-align:left}
+.nav-item i{width:19px;text-align:center;font-size:14.5px;transition:var(--t)}
+.nav-item:hover{background:var(--surface-3);color:var(--text)}
+.nav-item.active{background:var(--brand-soft);color:var(--brand)}
+.nav-item.active::before{content:'';position:absolute;left:-12px;top:50%;transform:translateY(-50%);width:3px;height:19px;background:var(--brand);border-radius:0 3px 3px 0}
+.nav-item .pill{margin-left:auto;font-size:10.5px;font-weight:700;padding:2.5px 8px;border-radius:var(--r-full);background:var(--surface-3);color:var(--text-2)}
+.nav-item.active .pill{background:var(--brand);color:#fff}
+.sb-foot{padding:13px 12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:7px}
+.sb-user{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:var(--r-md);background:var(--surface-2);border:1px solid var(--line)}
+.sb-user .avatar{width:33px;height:33px;border-radius:9px;background:linear-gradient(140deg,var(--brand),var(--info));color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;flex-shrink:0}
+.sb-user .meta{min-width:0;flex:1}
+.sb-user .name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.role-tag{font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 7px;border-radius:var(--r-full);background:var(--brand-soft);color:var(--brand);display:inline-block;margin-top:2px}
+.role-tag.student-role{background:var(--info-soft);color:var(--info)}
+.sb-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.sb-act{padding:9px;border:1px solid var(--line);background:var(--surface);border-radius:var(--r-sm);color:var(--text-2);font-size:12px;font-weight:600;cursor:pointer;transition:var(--t);display:flex;align-items:center;justify-content:center;gap:7px}
+.sb-act:hover{background:var(--surface-3);color:var(--text)}
+.sb-act.danger:hover{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+
+.main{flex:1;min-width:0;margin-left:var(--sidebar);display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:15px;padding:13px 26px;background:color-mix(in srgb,var(--surface) 82%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.tb-title h1{font-family:var(--fd);font-size:18px;font-weight:700;letter-spacing:-.4px;line-height:1.2}
+.tb-title p{font-size:12.5px;color:var(--text-3);margin-top:1px}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:9px}
+.searchbox{position:relative;width:265px}
+.searchbox i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:12.5px;pointer-events:none}
+.searchbox input{width:100%;padding:9.5px 66px 9.5px 34px;border:1.5px solid var(--line);border-radius:var(--r-md);background:var(--surface-2);color:var(--text);font-size:13.5px;outline:none;transition:var(--t)}
+.searchbox input:focus{border-color:var(--brand);background:var(--surface);box-shadow:0 0 0 4px var(--brand-ring)}
+.searchbox kbd{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-family:var(--f);font-size:10px;font-weight:600;color:var(--text-3);background:var(--surface-3);border:1px solid var(--line);padding:2.5px 6px;border-radius:5px}
+.burger{display:none}
+
+.content{padding:26px;max-width:1340px;width:100%;margin:0 auto;flex:1}
+.tab-content{display:none}
+.tab-content.active{display:block;animation:tabIn .42s var(--ease)}
+@keyframes tabIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ==================== COMMON ==================== */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-1);overflow:hidden}
+.card-hd{padding:17px 21px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:13px;flex-wrap:wrap}
+.card-hd h3{font-family:var(--fd);font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px}
+.card-hd h3 .ci{width:29px;height:29px;border-radius:8px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;font-size:12.5px}
+.card-hd .sub{font-size:12.5px;color:var(--text-3);margin-top:2px}
+.card-hd .right{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.card-bd{padding:21px}
+.grid-2{display:grid;grid-template-columns:1.62fr 1fr;gap:18px}
+.stack{display:flex;flex-direction:column;gap:18px}
+
+.banner{display:flex;align-items:center;gap:13px;padding:13px 17px;border-radius:var(--r-md);font-size:13.5px;font-weight:500;margin-bottom:20px;border:1px solid transparent;line-height:1.55}
+.banner i{font-size:15px;flex-shrink:0}
+.banner.info{background:var(--info-soft);color:var(--info);border-color:color-mix(in srgb,var(--info) 22%,transparent)}
+.banner.ok{background:var(--ok-soft);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 22%,transparent)}
+.banner.warn{background:var(--warn-soft);color:var(--warn);border-color:color-mix(in srgb,var(--warn) 22%,transparent)}
+.fee-notice{composes:banner}
+
+/* hero */
+.hero{background:linear-gradient(120deg,var(--brand) 0%,#4338CA 52%,#0E7490 100%);border-radius:var(--r-lg);padding:26px 28px;color:#fff;position:relative;overflow:hidden;margin-bottom:18px}
+.hero::after{content:'';position:absolute;top:-70px;right:-40px;width:250px;height:250px;background:radial-gradient(circle,rgba(255,255,255,.17),transparent 68%);border-radius:50%}
+.hero .eyebrow{font-size:11px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;opacity:.72}
+.hero h2{font-family:var(--fd);font-size:25px;font-weight:800;letter-spacing:-.7px;margin-top:7px}
+.hero p{opacity:.82;font-size:14px;margin-top:6px;max-width:560px;line-height:1.6}
+.hero-chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px;position:relative;z-index:2}
+.hero-chip{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);padding:7px 13px;border-radius:var(--r-full);font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px)}
+
+/* stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(218px,1fr));gap:15px;margin-bottom:18px}
+.stat-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:19px;box-shadow:var(--sh-1);transition:var(--t);position:relative;overflow:hidden}
+.stat-card:hover{transform:translateY(-3px);box-shadow:var(--sh-2);border-color:var(--line-2)}
+.stat-card .top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:13px}
+.stat-icon{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:15px;background:var(--brand-soft);color:var(--brand)}
+.stat-trend{font-size:10.5px;font-weight:700;padding:3.5px 9px;border-radius:var(--r-full);background:var(--surface-3);color:var(--text-2);letter-spacing:.2px}
+.stat-label{font-size:12px;font-weight:600;letter-spacing:.35px;text-transform:uppercase;color:var(--text-3)}
+.stat-number{font-family:var(--fd);font-size:30px;font-weight:800;letter-spacing:-1px;margin-top:4px;line-height:1}
+.stat-card.green .stat-icon{background:var(--ok-soft);color:var(--ok)} .stat-card.green .stat-number{color:var(--ok)}
+.stat-card.orange .stat-icon{background:var(--warn-soft);color:var(--warn)} .stat-card.orange .stat-number{color:var(--warn)}
+.stat-card.red .stat-icon{background:var(--bad-soft);color:var(--bad)} .stat-card.red .stat-number{color:var(--bad)}
+.stat-bar{height:4px;border-radius:4px;background:var(--surface-3);margin-top:13px;overflow:hidden}
+.stat-bar span{display:block;height:100%;border-radius:4px;background:var(--brand);width:0;transition:width .9s var(--ease)}
+.stat-card.green .stat-bar span{background:var(--ok)}
+.stat-card.orange .stat-bar span{background:var(--warn)}
+.stat-card.red .stat-bar span{background:var(--bad)}
+
+/* chart */
+.chart{display:flex;align-items:flex-end;gap:7px;height:172px;padding-top:12px}
+.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
+.chart-bar{width:100%;max-width:34px;background:linear-gradient(180deg,var(--brand-2),var(--brand));border-radius:6px 6px 3px 3px;min-height:4px;transition:height .8s var(--ease),filter var(--t);position:relative;cursor:pointer}
+.chart-bar:hover{filter:brightness(1.18)}
+.chart-bar[data-v]:hover::after{content:attr(data-v);position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);background:var(--text);color:var(--surface);font-size:10.5px;font-weight:700;padding:3.5px 8px;border-radius:5px;white-space:nowrap;z-index:5}
+.chart-lbl{font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.3px}
+
+/* pending list */
+.plist{display:flex;flex-direction:column}
+.prow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.prow:last-child{border-bottom:none}
+.prow .av{width:34px;height:34px;border-radius:9px;background:var(--surface-3);color:var(--text-2);display:grid;place-items:center;font-weight:700;font-size:12.5px;flex-shrink:0}
+.prow .nm{font-size:13.5px;font-weight:600}
+.prow .sb{font-size:11.5px;color:var(--text-3);margin-top:1px}
+.prow .val{margin-left:auto;text-align:right}
+.mini-bar{width:74px;height:5px;border-radius:5px;background:var(--surface-3);overflow:hidden;margin-top:5px}
+.mini-bar span{display:block;height:100%;background:var(--ok);border-radius:5px;transition:width .7s var(--ease)}
+.pct{font-size:12px;font-weight:700;color:var(--text-2)}
+
+/* form */
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:15px;margin-bottom:17px}
+.req{color:var(--bad);font-weight:700}
+
+/* toolbar */
+.toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;padding:13px 21px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.tb-search{position:relative;flex:1;min-width:185px;max-width:330px}
+.tb-search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:12px}
+.tb-search input{width:100%;padding:9px 13px 9px 32px;border:1.5px solid var(--line);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font-size:13.5px;outline:none;transition:var(--t)}
+.tb-search input:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-ring)}
+
+/* table */
+.table-wrap{overflow-x:auto}
+.student-table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:760px}
+.student-table thead th{padding:11px 21px;text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.85px;color:var(--text-3);font-weight:700;background:var(--surface-2);border-bottom:1px solid var(--line);white-space:nowrap}
+.student-table tbody td{padding:13px 21px;border-bottom:1px solid var(--line);vertical-align:middle}
+.student-table tbody tr{transition:background .18s ease}
+.student-table tbody tr:hover{background:var(--surface-2)}
+.student-table tbody tr:last-child td{border-bottom:none}
+.cell-user{display:flex;align-items:center;gap:11px}
+.cell-av{width:35px;height:35px;border-radius:9px;display:grid;place-items:center;font-weight:700;font-size:12.5px;color:#fff;flex-shrink:0}
+.cell-nm{font-weight:650;font-size:13.5px}
+.cell-sub{font-size:11.5px;color:var(--text-3);margin-top:1px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3.5px 10px;border-radius:var(--r-full);font-size:11.5px;font-weight:650;background:var(--surface-3);color:var(--text-2)}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}
+.chip .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.empty-row td{padding:0!important;border:none!important}
+.empty-state{text-align:center;padding:54px 22px}
+.empty-state .es-ico{width:60px;height:60px;border-radius:17px;background:var(--surface-3);color:var(--text-3);display:grid;place-items:center;font-size:23px;margin:0 auto 15px}
+.empty-state h4{font-family:var(--fd);font-size:15.5px;font-weight:700}
+.empty-state p{font-size:13.5px;color:var(--text-3);margin-top:6px;max-width:330px;margin-inline:auto;line-height:1.6}
+.skel{background:linear-gradient(90deg,var(--surface-3) 25%,var(--line) 50%,var(--surface-3) 75%);background-size:200% 100%;animation:shim 1.3s infinite;border-radius:6px}
+@keyframes shim{to{background-position:-200% 0}}
+
+/* fees */
+.fee-picker{display:flex;gap:11px;align-items:center;flex-wrap:wrap}
+.sel-wrap{position:relative;flex:1;min-width:230px;max-width:340px}
+.sel-wrap>i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:12.5px;pointer-events:none}
+.sel-wrap::after{content:'\f078';font-family:'Font Awesome 6 Free';font-weight:900;position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:10.5px;pointer-events:none}
+.sel-wrap select{width:100%;padding:11px 36px 11px 35px;border:1.5px solid var(--line);border-radius:var(--r-md);background:var(--surface-2);color:var(--text);font-size:14px;font-weight:600;outline:none;cursor:pointer;appearance:none;transition:var(--t)}
+.sel-wrap select:focus{border-color:var(--brand);box-shadow:0 0 0 4px var(--brand-ring)}
+
+.ring-wrap{display:flex;align-items:center;gap:15px;padding:15px 18px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-md);margin-bottom:17px;flex-wrap:wrap}
+.ring{--p:0;width:62px;height:62px;border-radius:50%;flex-shrink:0;background:conic-gradient(var(--ok) calc(var(--p)*1%),var(--surface-3) 0);display:grid;place-items:center;transition:--p .8s var(--ease)}
+.ring::before{content:'';position:absolute;width:47px;height:47px;border-radius:50%;background:var(--surface-2)}
+.ring b{position:relative;font-family:var(--fd);font-size:14px;font-weight:800}
+.ring-meta h4{font-family:var(--fd);font-size:15px;font-weight:700}
+.ring-meta p{font-size:12.5px;color:var(--text-3);margin-top:3px}
+.ring-legend{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}
+.lg{font-size:11.5px;color:var(--text-3);display:flex;flex-direction:column;gap:2px}
+.lg b{font-family:var(--fd);font-size:17px;font-weight:800;color:var(--text)}
+
+.fee-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:12px}
+.fee-item{background:var(--surface-2);border:1.5px solid var(--line);border-radius:var(--r-md);padding:13px 14px;transition:var(--t)}
+.fee-item:hover{border-color:var(--line-2);transform:translateY(-2px);box-shadow:var(--sh-2)}
+.fee-item.is-paid{border-color:color-mix(in srgb,var(--ok) 38%,transparent);background:color-mix(in srgb,var(--ok-soft) 62%,var(--surface))}
+.month-label{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:13.5px;margin-bottom:11px}
+.status-badge{font-size:10px;padding:3px 9px;border-radius:var(--r-full);font-weight:700;letter-spacing:.4px;text-transform:uppercase;background:var(--surface-3);color:var(--text-3)}
+.status-badge.paid{background:var(--ok-soft);color:var(--ok)}
+.status-badge.unpaid{background:var(--surface-3);color:var(--text-3)}
+.fee-controls{display:flex;gap:10px;align-items:center}
+.fee-controls input[type="checkbox"]{width:19px;height:19px;accent-color:var(--ok);cursor:pointer;flex-shrink:0}
+.fee-controls input[type="date"]{flex:1;min-width:0;padding:7px 9px;border:1.5px solid var(--line);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font-size:12.5px;outline:none;transition:var(--t)}
+.fee-controls input[type="date"]:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-ring)}
+.fee-controls input:disabled{opacity:.42;cursor:not-allowed}
+.fee-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:15px 21px;border-top:1px solid var(--line);background:var(--surface-2)}
+.saved-tag{margin-left:auto;font-size:12.5px;color:var(--text-3);display:flex;align-items:center;gap:7px}
+.saved-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--text-3)}
+
+/* toast */
+.toast-container{position:fixed;bottom:22px;right:22px;z-index:9500;display:flex;flex-direction:column;gap:10px;max-width:365px;width:calc(100% - 44px)}
+.toast{background:var(--surface);border:1px solid var(--line);padding:13px 15px;border-radius:var(--r-md);box-shadow:var(--sh-3);display:flex;gap:12px;align-items:flex-start;font-size:13.5px;font-weight:500;animation:tIn .4s var(--ease);position:relative;overflow:hidden;color:var(--text)}
+.toast .ti{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;flex-shrink:0;font-size:12.5px}
+.toast.success .ti{background:var(--ok-soft);color:var(--ok)}
+.toast.error .ti{background:var(--bad-soft);color:var(--bad)}
+.toast::after{content:'';position:absolute;bottom:0;left:0;height:2.5px;background:var(--ok);animation:tbar 3.2s linear forwards}
+.toast.error::after{background:var(--bad)}
+@keyframes tbar{from{width:100%}to{width:0}}
+@keyframes tIn{from{opacity:0;transform:translateX(30px) scale(.96)}to{opacity:1;transform:translateX(0) scale(1)}}
+.toast.hide{animation:tOut .3s var(--ease) forwards}
+@keyframes tOut{to{opacity:0;transform:translateX(30px) scale(.96)}}
+
+/* modal */
+.modal-overlay{position:fixed;inset:0;z-index:9700;background:rgba(8,11,20,.58);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:22px;opacity:0;visibility:hidden;transition:opacity .28s ease,visibility 0s linear .28s}
+.modal-overlay.open{opacity:1;visibility:visible;transition:opacity .28s ease}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-3);max-width:410px;width:100%;padding:26px;transform:scale(.93) translateY(12px);transition:transform .32s var(--ease)}
+.modal-overlay.open .modal{transform:scale(1) translateY(0)}
+.modal .m-ico{width:50px;height:50px;border-radius:14px;background:var(--bad-soft);color:var(--bad);display:grid;place-items:center;font-size:19px;margin-bottom:15px}
+.modal h3{font-family:var(--fd);font-size:18px;font-weight:700}
+.modal p{font-size:13.5px;color:var(--text-2);margin-top:8px;line-height:1.65}
+.modal-foot{display:flex;gap:10px;margin-top:22px}
+.modal-foot .btn{flex:1}
+
+/* responsive */
+@media(max-width:1080px){.grid-2{grid-template-columns:1fr}.searchbox{width:205px}}
+@media(max-width:900px){
+  #loginScreen{grid-template-columns:1fr}
+  .auth-visual{display:none}
+  .auth-panel{padding:30px 22px}
 }
-@keyframes rise{ from{ opacity:0; transform:translateY(24px);} to{ opacity:1; transform:translateY(0);} }
-.login-left{ background:linear-gradient(160deg,#1E3A8A 0%,#2563EB 55%,#0D9488 130%); padding:48px 40px; color:#fff; display:flex; flex-direction:column; justify-content:space-between; }
-.logo-row{ display:flex; align-items:center; gap:12px; margin-bottom:36px; }
-.logo-mark{ width:44px; height:44px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25); border-radius:12px; display:grid; place-items:center; font-size:20px; }
-.logo-row span{ font-size:19px; font-weight:800; letter-spacing:-.3px; }
-.login-left h1{ font-size:30px; font-weight:800; line-height:1.2; letter-spacing:-.6px; }
-.login-left .tagline{ margin-top:12px; font-size:14px; line-height:1.7; color:rgba(255,255,255,.75); }
-.trust-list{ margin-top:30px; display:grid; gap:12px; }
-.trust-item{ display:flex; gap:12px; align-items:flex-start; font-size:13px; color:rgba(255,255,255,.85); }
-.trust-item i{ margin-top:2px; width:26px; height:26px; flex-shrink:0; background:rgba(255,255,255,.14); border-radius:8px; display:grid; place-items:center; font-size:11px; }
-.login-left .copyright{ font-size:11px; color:rgba(255,255,255,.45); margin-top:32px; }
-
-.login-right{ background:#fff; padding:44px 40px; display:flex; flex-direction:column; justify-content:center; }
-.login-right h2{ font-size:22px; font-weight:800; letter-spacing:-.4px; }
-.login-right .sub{ color:var(--muted); font-size:14px; margin-top:6px; margin-bottom:26px; }
-.role-buttons{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
-.role-btn{
-  padding:16px 10px; border:1.5px solid var(--border); border-radius:var(--r-md); background:#fff;
-  cursor:pointer; transition:var(--tr); display:flex; flex-direction:column; align-items:center; gap:7px; font-family:var(--font);
+@media(max-width:860px){
+  .sidebar{transform:translateX(-100%);box-shadow:var(--sh-3)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .burger{display:grid}
+  .searchbox{display:none}
+  .content{padding:18px 15px 86px}
+  .topbar{padding:11px 15px}
+  .sb-overlay{position:fixed;inset:0;background:rgba(8,11,20,.5);z-index:55;opacity:0;visibility:hidden;transition:var(--t)}
+  .sb-overlay.show{opacity:1;visibility:visible}
 }
-.role-btn i{ width:38px; height:38px; border-radius:10px; display:grid; place-items:center; font-size:16px; background:var(--bg); color:var(--muted); transition:var(--tr); }
-.role-btn .label{ font-weight:700; font-size:14px; }
-.badge-role{ font-size:10px; color:var(--muted); font-weight:500; }
-.role-btn:hover{ border-color:#BFDBFE; transform:translateY(-2px); box-shadow:var(--sh-md); }
-.role-btn:hover i{ background:var(--accent-soft); color:var(--accent); }
-.role-btn.active-role{ border-color:var(--accent); background:var(--accent-soft); box-shadow:0 0 0 4px var(--accent-glow); }
-.role-btn.active-role i{ background:var(--accent); color:#fff; }
-
-.teacher-login-form{ display:none; animation:fadeUp .35s ease; }
-.teacher-login-form.show{ display:block; }
-@keyframes fadeUp{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
-.field{ display:flex; flex-direction:column; gap:6px; margin-bottom:14px; text-align:left; }
-.field label{ font-size:12px; font-weight:700; color:var(--text); text-transform:uppercase; letter-spacing:.5px; }
-.field input{ padding:12px 14px; border:1.5px solid var(--border); border-radius:var(--r-md); font-family:var(--font); font-size:14px; background:#F8FAFC; transition:var(--tr); outline:none; }
-.field input:focus{ border-color:var(--accent); background:#fff; box-shadow:0 0 0 4px var(--accent-glow); }
-
-.btn-login{
-  width:100%; padding:13px; border:none; border-radius:var(--r-md);
-  background:var(--accent); color:#fff; font-family:var(--font); font-size:14px; font-weight:700; cursor:pointer;
-  transition:var(--tr); display:flex; align-items:center; justify-content:center; gap:8px; margin-top:4px;
-  box-shadow:0 6px 16px rgba(37,99,235,.3);
+@media(max-width:560px){
+  .stats-grid{grid-template-columns:1fr 1fr;gap:11px}
+  .stat-number{font-size:24px}
+  .stat-card{padding:15px}
+  .fee-grid{grid-template-columns:1fr}
+  .card-bd,.toolbar,.fee-actions{padding:15px}
+  .card-hd{padding:14px 15px}
+  .student-table thead th,.student-table tbody td{padding:11px 15px}
+  .hero{padding:20px}
+  .hero h2{font-size:20px}
+  .fee-actions .btn{flex:1}
+  .saved-tag{width:100%;margin-left:0;justify-content:center;padding-top:4px}
 }
-.btn-login:hover{ background:var(--accent-dark); transform:translateY(-1px); box-shadow:0 10px 24px rgba(37,99,235,.4); }
-.btn-login:active{ transform:scale(.98); }
-.login-error{ color:var(--red); font-size:13px; min-height:18px; margin-top:10px; font-weight:500; }
-.student-quick-btn{
-  margin-top:12px; width:100%; padding:12px; border:1.5px solid var(--border); border-radius:var(--r-md);
-  background:#fff; color:var(--text); font-family:var(--font); font-size:14px; font-weight:600; cursor:pointer; transition:var(--tr);
-  display:flex; align-items:center; justify-content:center; gap:8px;
-}
-.student-quick-btn:hover{ border-color:var(--teal); color:var(--teal); background:#F0FDFA; }
-.footer-note{ margin-top:20px; font-size:11px; color:var(--muted); text-align:center; padding-top:16px; border-top:1px solid var(--border); }
-.footer-note strong{ color:var(--text); }
-
-/* ===================== APP LAYOUT ===================== */
-#app{ display:none; opacity:0; transition:opacity .5s ease; }
-#app.visible{ display:block; opacity:1; }
-.layout{ display:flex; min-height:100vh; }
-
-/* SIDEBAR */
-.sidebar{
-  width:240px; background:var(--sidebar); color:#fff; padding:24px 16px;
-  display:flex; flex-direction:column; gap:8px; position:fixed; top:0; left:0; bottom:0; z-index:50;
-}
-.sidebar .logo-row{ margin-bottom:28px; padding:0 8px; }
-.sidebar .logo-mark{ background:var(--accent); border:none; }
-.side-label{ font-size:10px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:#475569; padding:0 10px; margin:8px 0 4px; }
-.nav-tabs{ display:flex; flex-direction:column; gap:4px; }
-.tab-btn{
-  display:flex; align-items:center; gap:12px; padding:11px 12px; border:none; border-radius:var(--r-md);
-  background:transparent; color:var(--sidebar-text); font-family:var(--font); font-size:14px; font-weight:600;
-  cursor:pointer; transition:var(--tr); text-align:left; width:100%;
-}
-.tab-btn i{ width:20px; text-align:center; font-size:15px; }
-.tab-btn:hover{ background:var(--sidebar-hover); color:#fff; }
-.tab-btn.active{ background:var(--accent); color:#fff; box-shadow:0 4px 12px rgba(37,99,235,.35); }
-.sidebar-footer{ margin-top:auto; padding:14px 10px; border-top:1px solid #1E293B; display:flex; align-items:center; gap:10px; }
-.sidebar-footer .avatar{ width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg,var(--accent),var(--teal)); display:grid; place-items:center; font-weight:800; font-size:14px; color:#fff; flex-shrink:0; }
-.sidebar-footer .user-info{ line-height:1.25; overflow:hidden; }
-.sidebar-footer .name{ font-size:13px; font-weight:700; color:#fff; white-space:nowrap; }
-.role-tag{ font-size:10px; font-weight:700; color:#60A5FA; letter-spacing:.4px; text-transform:uppercase; }
-.role-tag.student-role{ color:#2DD4BF; }
-.btn-logout{ margin-left:auto; border:none; background:transparent; color:#64748B; font-size:15px; cursor:pointer; padding:8px; border-radius:8px; transition:var(--tr); }
-.btn-logout:hover{ background:#7F1D1D; color:#FCA5A5; }
-
-/* MAIN */
-.main{ flex:1; margin-left:240px; padding:0 32px 40px; min-width:0; }
-.topbar{
-  display:flex; align-items:center; justify-content:space-between; gap:16px;
-  padding:20px 0 16px; border-bottom:1px solid var(--border); margin-bottom:24px; flex-wrap:wrap;
-}
-.topbar .page-title{ font-size:20px; font-weight:800; letter-spacing:-.4px; }
-.topbar .date-chip{ display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--muted); background:var(--card); border:1px solid var(--border); padding:8px 14px; border-radius:var(--r-full); box-shadow:var(--sh-sm); }
-.topbar .date-chip i{ color:var(--accent); }
-
-.view-only-banner{
-  background:var(--amber-soft); border:1px solid #FDE68A; color:#92400E;
-  padding:12px 16px; border-radius:var(--r-md); font-size:13px; font-weight:500; margin-bottom:20px;
-  display:flex; align-items:center; gap:10px;
-}
-
-/* TAB CONTENT */
-.tab-content{ display:none; animation:fadeUp .4s cubic-bezier(.4,0,.2,1); }
-.tab-content.active{ display:block; }
-
-/* DASHBOARD */
-.dashboard-greeting{ background:linear-gradient(135deg,#1E3A8A,#2563EB); color:#fff; padding:26px 28px; border-radius:var(--r-lg); margin-bottom:20px; position:relative; overflow:hidden; }
-.dashboard-greeting::after{ content:''; position:absolute; right:-60px; top:-60px; width:220px; height:220px; border-radius:50%; background:rgba(255,255,255,.08); }
-.dashboard-greeting h3{ font-size:21px; font-weight:800; letter-spacing:-.3px; }
-.dashboard-greeting p{ margin-top:6px; font-size:14px; color:rgba(255,255,255,.8); }
-
-.stats-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-bottom:20px; }
-.stat-card{ background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:20px; box-shadow:var(--sh-sm); transition:var(--tr); display:flex; align-items:flex-start; gap:14px; }
-.stat-card:hover{ transform:translateY(-3px); box-shadow:var(--sh-md); }
-.stat-ico{ width:44px; height:44px; border-radius:12px; display:grid; place-items:center; font-size:17px; flex-shrink:0; background:var(--accent-soft); color:var(--accent); }
-.stat-card.green .stat-ico{ background:var(--green-soft); color:var(--green); }
-.stat-card.orange .stat-ico{ background:var(--amber-soft); color:var(--amber); }
-.stat-card.red .stat-ico{ background:var(--red-soft); color:var(--red); }
-.stat-label{ font-size:12px; font-weight:600; color:var(--muted); }
-.stat-number{ font-size:28px; font-weight:800; letter-spacing:-.5px; margin-top:2px; }
-
-.progress-panel{ background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:22px 24px; box-shadow:var(--sh-sm); margin-bottom:20px; }
-.progress-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-.progress-head .t{ font-size:14px; font-weight:700; }
-.progress-head .pct{ font-size:14px; font-weight:800; color:var(--accent); }
-.progress-track{ height:10px; background:var(--bg); border-radius:var(--r-full); overflow:hidden; }
-.progress-fill{ height:100%; width:0%; border-radius:var(--r-full); background:linear-gradient(90deg,var(--accent),var(--teal)); transition:width .8s cubic-bezier(.4,0,.2,1); }
-.progress-hint{ margin-top:10px; font-size:12px; color:var(--muted); }
-
-/* PANELS */
-.card-panel{ background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:24px; box-shadow:var(--sh-sm); margin-bottom:20px; }
-.panel-title{ display:flex; align-items:center; gap:10px; font-size:15px; font-weight:700; margin-bottom:18px; }
-.panel-title i{ width:32px; height:32px; border-radius:9px; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center; font-size:13px; }
-.section-header{ margin-bottom:4px; }
-.form-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-bottom:16px; }
-.card-panel .field input{ background:#fff; }
-.text-muted{ color:var(--muted); font-size:14px; }
-
-/* BUTTONS */
-.btn-primary,.btn-secondary,.btn-danger{
-  border:none; border-radius:var(--r-md); font-family:var(--font); font-weight:700; cursor:pointer;
-  transition:var(--tr); display:inline-flex; align-items:center; justify-content:center; gap:8px;
-}
-.btn-primary{ padding:11px 22px; font-size:14px; background:var(--accent); color:#fff; box-shadow:0 4px 12px rgba(37,99,235,.28); }
-.btn-primary:hover{ background:var(--accent-dark); transform:translateY(-1px); }
-.btn-primary:active{ transform:scale(.98); }
-.btn-primary:disabled,.btn-secondary:disabled{ opacity:.5; cursor:not-allowed; transform:none!important; }
-.btn-secondary{ padding:11px 20px; font-size:14px; background:#fff; border:1.5px solid var(--border); color:var(--text); }
-.btn-secondary:hover{ background:var(--bg); }
-.btn-danger{ padding:7px 14px; font-size:12px; background:var(--red-soft); color:var(--red); border:1px solid #FECACA; }
-.btn-danger:hover{ background:#FEE2E2; }
-.btn-danger:disabled{ opacity:.4; cursor:not-allowed; }
-
-/* SEARCH */
-.search-box{ position:relative; max-width:300px; width:100%; margin-bottom:14px; }
-.search-box i{ position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:13px; }
-.search-box input{ width:100%; padding:10px 14px 10px 36px; border:1.5px solid var(--border); border-radius:var(--r-md); font-family:var(--font); font-size:13px; background:#fff; outline:none; transition:var(--tr); }
-.search-box input:focus{ border-color:var(--accent); box-shadow:0 0 0 4px var(--accent-glow); }
-
-/* TABLE */
-.table-wrapper{ overflow:auto; border:1px solid var(--border); border-radius:var(--r-md); }
-.student-table{ width:100%; border-collapse:collapse; font-size:14px; min-width:640px; }
-.student-table thead{ background:#F8FAFC; }
-.student-table th{ padding:12px 16px; text-align:left; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--muted); border-bottom:1px solid var(--border); }
-.student-table td{ padding:13px 16px; border-bottom:1px solid #F1F5F9; vertical-align:middle; }
-.student-table tbody tr{ transition:background .15s ease; }
-.student-table tbody tr:hover{ background:#F8FAFC; }
-.student-table tbody tr:last-child td{ border-bottom:none; }
-.empty-row td{ text-align:center; padding:36px!important; color:var(--muted); }
-.actions{ display:flex; gap:8px; }
-
-/* FEES */
-.fee-student-selector{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
-.fee-student-selector label{ font-size:13px; font-weight:700; }
-.fee-student-selector select{
-  padding:10px 38px 10px 14px; border:1.5px solid var(--border); border-radius:var(--r-md); background:#fff;
-  font-family:var(--font); font-size:14px; font-weight:600; min-width:250px; outline:none; cursor:pointer; transition:var(--tr);
-  appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center;
-}
-.fee-student-selector select:focus{ border-color:var(--accent); box-shadow:0 0 0 4px var(--accent-glow); }
-.fee-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(215px,1fr)); gap:14px; margin-top:12px; }
-.fee-item{ background:#F8FAFC; border:1.5px solid var(--border); border-radius:var(--r-md); padding:14px; transition:var(--tr); }
-.fee-item:hover{ border-color:#93C5FD; background:#fff; box-shadow:var(--sh-sm); }
-.month-label{ display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:13px; margin-bottom:10px; }
-.status-badge{ font-size:10px; padding:3px 9px; border-radius:var(--r-full); font-weight:700; text-transform:uppercase; letter-spacing:.4px; }
-.status-badge.paid{ background:var(--green-soft); color:var(--green); border:1px solid #A7F3D0; }
-.status-badge.unpaid{ background:#F1F5F9; color:var(--muted); border:1px solid var(--border); }
-.fee-controls{ display:flex; gap:10px; align-items:center; }
-.fee-controls input[type="checkbox"]{ width:17px; height:17px; accent-color:var(--accent); cursor:pointer; }
-.fee-controls input[type="date"]{ flex:1; padding:7px 9px; border:1px solid var(--border); border-radius:8px; font-family:var(--font); font-size:12px; min-width:0; background:#fff; }
-.fee-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; padding-top:18px; border-top:1px solid var(--border); align-items:center; }
-.fee-notice{ padding:12px 16px; border-radius:var(--r-md); font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px; margin-bottom:14px; }
-.fee-notice.complete{ background:var(--green-soft); color:#065F46; border:1px solid #A7F3D0; }
-.fee-notice.warning{ background:var(--red-soft); color:#991B1B; border:1px solid #FECACA; }
-.fee-notice.info{ background:var(--accent-soft); color:#1E40AF; border:1px solid #BFDBFE; }
-
-/* TOAST */
-.toast-container{ position:fixed; bottom:24px; right:24px; z-index:99999; display:flex; flex-direction:column; gap:10px; max-width:360px; width:90%; }
-.toast{ background:#0F172A; color:#fff; padding:14px 16px; border-radius:var(--r-md); box-shadow:var(--sh-lg); display:flex; gap:12px; align-items:center; font-size:13px; font-weight:500; animation:toastIn .35s cubic-bezier(.4,0,.2,1); }
-.toast i{ font-size:16px; }
-.toast.success i{ color:#34D399; }
-.toast.error i{ color:#F87171; }
-.toast.hide{ animation:toastOut .3s ease forwards; }
-@keyframes toastIn{ from{ opacity:0; transform:translateY(16px);} to{ opacity:1; transform:translateY(0);} }
-@keyframes toastOut{ from{ opacity:1;} to{ opacity:0; transform:translateY(16px);} }
-
-.spinner{ width:15px; height:15px; border:2px solid rgba(255,255,255,.35); border-top-color:#fff; border-radius:50%; display:inline-block; animation:spin .7s linear infinite; }
-@keyframes spin{ to{ transform:rotate(360deg);} }
-
-/* RESPONSIVE */
-@media(max-width:880px){
-  .login-wrapper{ grid-template-columns:1fr; max-width:440px; }
-  .login-left{ display:none; }
-  .sidebar{ width:100%; height:auto; position:fixed; top:auto; bottom:0; left:0; right:0; flex-direction:row; align-items:center; padding:8px 12px; gap:6px; border-top:1px solid #1E293B; }
-  .sidebar .logo-row,.side-label,.sidebar-footer .user-info{ display:none; }
-  .nav-tabs{ flex-direction:row; flex:1; }
-  .tab-btn{ flex-direction:column; gap:4px; font-size:10px; padding:8px 4px; justify-content:center; align-items:center; }
-  .tab-btn i{ font-size:16px; }
-  .sidebar-footer{ margin:0; padding:0; border:none; }
-  .main{ margin-left:0; padding:0 16px 100px; }
-  .stats-grid{ grid-template-columns:1fr 1fr; }
-  .fee-grid{ grid-template-columns:1fr; }
-}
-@media(max-width:420px){ .stats-grid{ grid-template-columns:1fr; } .login-right{ padding:32px 22px; } }
 </style>
 </head>
 <body>
 
-<!-- ================= LOGIN ================= -->
+<!-- ==================== AUTH ==================== -->
 <div id="loginScreen">
-  <div class="login-grid-lines"></div>
-  <div class="login-wrapper">
-    <div class="login-left">
-      <div>
-        <div class="logo-row"><div class="logo-mark"><i class="fas fa-building-columns"></i></div><span>FeeDesk</span></div>
-        <h1>Manage student fees, the smart way.</h1>
-        <p class="tagline">One clean dashboard for student records, monthly fee tracking and instant payment overview — synced live to the cloud.</p>
-        <div class="trust-list">
-          <div class="trust-item"><i class="fas fa-cloud-arrow-up"></i> Cloud synced — access from any device, anytime</div>
-          <div class="trust-item"><i class="fas fa-user-shield"></i> Secure role-based access for staff & students</div>
-          <div class="trust-item"><i class="fas fa-gauge-high"></i> Live statistics, dues & collection insights</div>
-        </div>
+  <div class="auth-visual">
+    <div class="orb orb-a"></div><div class="orb orb-b"></div>
+    <div class="av-top"><div class="av-mark"><i class="fa-solid fa-layer-group"></i> FeeDesk</div></div>
+    <div class="av-mid">
+      <h1>Fee collection,<br><em>finally organised.</em></h1>
+      <p>Track every student, every month, every rupee — from one clean dashboard that syncs instantly across all your devices.</p>
+      <div class="av-stats">
+        <div class="av-stat"><b>12</b><span>MONTH CYCLE</span></div>
+        <div class="av-stat"><b>Live</b><span>CLOUD SYNC</span></div>
+        <div class="av-stat"><b>2</b><span>ACCESS ROLES</span></div>
       </div>
-      <div class="copyright">© 2025 FeeDesk · Built for modern institutes</div>
     </div>
-    <div class="login-right">
+    <div class="av-foot">
+      <span><i class="fa-solid fa-shield-halved"></i> Secure access</span>
+      <span><i class="fa-solid fa-bolt"></i> Realtime updates</span>
+      <span><i class="fa-solid fa-mobile-screen"></i> Works anywhere</span>
+    </div>
+  </div>
+
+  <div class="auth-panel">
+    <div class="auth-box">
       <h2>Sign in to continue</h2>
-      <p class="sub">Select how you want to access the portal</p>
+      <p class="lead">Select how you'd like to access the fee dashboard.</p>
+
+      <div class="seg-label">Access Type</div>
       <div class="role-buttons">
-        <button class="role-btn" id="studentRoleBtn">
-          <i class="fas fa-book-open-reader"></i>
-          <span class="label">Student Portal</span>
+        <button type="button" class="role-btn" id="studentRoleBtn">
+          <i class="fa-solid fa-user-graduate"></i>
+          <span class="label">Student</span>
           <span class="badge-role">Read-only access</span>
         </button>
-        <button class="role-btn" id="teacherRoleBtn">
-          <i class="fas fa-user-tie"></i>
-          <span class="label">Staff Portal</span>
-          <span class="badge-role">Full admin access</span>
+        <button type="button" class="role-btn" id="teacherRoleBtn">
+          <i class="fa-solid fa-user-shield"></i>
+          <span class="label">Teacher</span>
+          <span class="badge-role">Full admin rights</span>
         </button>
       </div>
+
       <div class="teacher-login-form" id="teacherLoginForm">
         <div class="field">
-          <label for="teacherId">Staff ID</label>
-          <input type="text" id="teacherId" placeholder="Enter your staff ID" autocomplete="off"/>
+          <label for="teacherId"><i class="fa-solid fa-id-badge"></i> Teacher ID</label>
+          <input type="text" class="inp" id="teacherId" placeholder="Enter your staff ID" autocomplete="off"/>
         </div>
         <div class="field">
-          <label for="teacherPass">Password</label>
-          <input type="password" id="teacherPass" placeholder="••••••••" autocomplete="off"/>
+          <label for="teacherPass"><i class="fa-solid fa-key"></i> Password</label>
+          <div class="pass-wrap">
+            <input type="password" class="inp" id="teacherPass" placeholder="••••••••" autocomplete="off"/>
+            <button type="button" class="pass-eye" id="togglePass" title="Show password"><i class="fa-regular fa-eye"></i></button>
+          </div>
         </div>
-        <button class="btn-login" id="teacherLoginBtn"><i class="fas fa-arrow-right-to-bracket"></i> Access Dashboard</button>
+        <button type="button" class="btn btn-brand btn-block" id="teacherLoginBtn">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign in securely
+        </button>
         <div class="login-error" id="loginError"></div>
       </div>
-      <button class="student-quick-btn" id="studentLoginBtn"><i class="fas fa-eye"></i> Browse as Student</button>
-      <div class="footer-note">Authorized staff only · Contact admin <strong>Ankush</strong> for credentials</div>
+
+      <div class="or-split">OR</div>
+      <button type="button" class="btn btn-ghost btn-block" id="studentLoginBtn">
+        <i class="fa-regular fa-eye"></i> Browse as Student
+      </button>
+
+      <div class="hint-box">
+        <i class="fa-solid fa-circle-info"></i>
+        <div>Demo teacher credentials — ID <code>Ankush</code> and password <code>Ankush123@</code>. Students can browse without signing in.</div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ================= TOAST ================= -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- ================= APP ================= -->
-<div id="app">
-<div class="layout">
+<!-- confirm modal -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <div class="m-ico"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <h3 id="cmTitle">Delete record?</h3>
+    <p id="cmText">This action cannot be undone.</p>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="cmCancel">Cancel</button>
+      <button class="btn btn-bad" id="cmOk"><i class="fa-solid fa-trash-can"></i> Delete</button>
+    </div>
+  </div>
+</div>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="logo-row"><div class="logo-mark"><i class="fas fa-building-columns"></i></div><span>FeeDesk</span></div>
-    <div class="side-label">Menu</div>
-    <nav class="nav-tabs" id="navTabs">
-      <button class="tab-btn active" data-tab="dashboard"><i class="fas fa-house"></i> Overview</button>
-      <button class="tab-btn" data-tab="students"><i class="fas fa-user-group"></i> Students</button>
-      <button class="tab-btn" data-tab="fees"><i class="fas fa-file-invoice-dollar"></i> Fee Records</button>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="avatar" id="userAvatar">U</div>
-      <div class="user-info">
-        <div class="name" id="userDisplayName">User</div>
-        <span class="role-tag" id="userRoleTag">Student</span>
+<!-- ==================== APP ==================== -->
+<div id="app">
+<div class="shell">
+
+  <div class="sb-overlay" id="sbOverlay"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <div class="mk"><i class="fa-solid fa-layer-group"></i></div>
+      <div><h2>FeeDesk</h2><small>Fee Management</small></div>
+    </div>
+
+    <div class="sb-scroll">
+      <div class="sb-cap">Workspace</div>
+      <button class="nav-item tab-btn active" data-tab="dashboard"><i class="fa-solid fa-gauge-high"></i> Overview</button>
+      <button class="nav-item tab-btn" data-tab="students"><i class="fa-solid fa-user-group"></i> Students <span class="pill" id="navStudentCount">0</span></button>
+      <button class="nav-item tab-btn" data-tab="fees"><i class="fa-solid fa-receipt"></i> Fee Ledger</button>
+
+      <div class="sb-cap" style="margin-top:22px">Tools</div>
+      <button class="nav-item" id="exportBtn"><i class="fa-solid fa-file-arrow-down"></i> Export CSV</button>
+      <button class="nav-item" id="refreshBtn"><i class="fa-solid fa-rotate"></i> Refresh Data</button>
+    </div>
+
+    <div class="sb-foot">
+      <div class="sb-user">
+        <div class="avatar" id="userAvatar">U</div>
+        <div class="meta">
+          <div class="name" id="userDisplayName">User</div>
+          <span class="role-tag" id="userRoleTag">Student</span>
+        </div>
       </div>
-      <button class="btn-logout" id="logoutBtn" title="Sign out"><i class="fas fa-arrow-right-from-bracket"></i></button>
+      <div class="sb-actions">
+        <button class="sb-act" id="themeBtn"><i class="fa-regular fa-moon"></i> <span id="themeLbl">Dark</span></button>
+        <button class="sb-act danger" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Exit</button>
+      </div>
     </div>
   </aside>
 
-  <!-- MAIN -->
-  <main class="main">
-    <div class="topbar">
-      <div class="page-title">Fee Management Console</div>
-      <div class="date-chip"><i class="fas fa-calendar-day"></i> <span id="todayDate">—</span></div>
-    </div>
+  <div class="main">
+    <header class="topbar">
+      <button class="btn btn-ico burger" id="burger"><i class="fa-solid fa-bars"></i></button>
+      <div class="tb-title">
+        <h1 id="pageTitle">Overview</h1>
+        <p id="pageSub">Snapshot of collections and pending dues</p>
+      </div>
+      <div class="tb-right">
+        <div class="searchbox">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="globalSearch" placeholder="Search students..."/>
+          <kbd>Ctrl K</kbd>
+        </div>
+        <button class="btn btn-ico" id="themeBtn2" title="Toggle theme"><i class="fa-regular fa-moon" id="themeIco2"></i></button>
+      </div>
+    </header>
 
-    <div id="viewOnlyBanner" class="view-only-banner" style="display:none;">
-      <i class="fas fa-lock"></i> Read-only mode active — only staff members can add, edit or remove records.
-    </div>
+    <div class="content">
+      <div id="viewOnlyBanner" class="banner info" style="display:none">
+        <i class="fa-solid fa-lock"></i>
+        <div><strong>Read-only mode.</strong> You can view all records, but only teachers can add, edit or delete data.</div>
+      </div>
 
-    <!-- OVERVIEW -->
-    <div class="tab-content active" id="tabDashboard">
-      <div class="dashboard-greeting">
-        <h3>Hello, <span id="greetingName">User</span> 👋</h3>
-        <p id="greetingSub">Here's a live snapshot of your institute's fee status.</p>
-      </div>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-ico"><i class="fas fa-user-group"></i></div>
-          <div><div class="stat-label">Enrolled Students</div><div class="stat-number" id="statTotalStudents">0</div></div>
+      <!-- ===== OVERVIEW ===== -->
+      <div class="tab-content active" id="tabDashboard">
+        <div class="hero">
+          <div class="eyebrow">Dashboard</div>
+          <h2>Hello, <span id="greetingName">User</span> 👋</h2>
+          <p id="greetingSub">Here's how fee collection is doing right now.</p>
+          <div class="hero-chips">
+            <span class="hero-chip"><i class="fa-solid fa-circle" style="font-size:7px;color:#6EE7B7"></i> Cloud connected</span>
+            <span class="hero-chip"><i class="fa-regular fa-calendar"></i> <span id="todayChip"></span></span>
+          </div>
         </div>
-        <div class="stat-card green">
-          <div class="stat-ico"><i class="fas fa-circle-check"></i></div>
-          <div><div class="stat-label">Payments Received</div><div class="stat-number" id="statFeesPaid">0</div></div>
-        </div>
-        <div class="stat-card orange">
-          <div class="stat-ico"><i class="fas fa-clock"></i></div>
-          <div><div class="stat-label">Payments Due</div><div class="stat-number" id="statFeesPending">0</div></div>
-        </div>
-        <div class="stat-card red">
-          <div class="stat-ico"><i class="fas fa-triangle-exclamation"></i></div>
-          <div><div class="stat-label">Overdue Months</div><div class="stat-number" id="statOverdue">0</div></div>
-        </div>
-      </div>
-      <div class="progress-panel">
-        <div class="progress-head">
-          <span class="t"><i class="fas fa-chart-line" style="color:var(--accent); margin-right:8px;"></i>Collection Rate</span>
-          <span class="pct" id="collectionPct">0%</span>
-        </div>
-        <div class="progress-track"><div class="progress-fill" id="collectionBar"></div></div>
-        <div class="progress-hint">Percentage of all monthly fees marked as received across every student.</div>
-      </div>
-      <div class="card-panel" style="margin-bottom:0;">
-        <p class="text-muted"><i class="fas fa-circle-info" style="color:var(--accent); margin-right:8px;"></i>Head over to <strong>Students</strong> to manage enrollments, or open <strong>Fee Records</strong> to update monthly payments.</p>
-      </div>
-    </div>
 
-    <!-- STUDENTS -->
-    <div class="tab-content" id="tabStudents">
-      <div class="card-panel" id="addStudentPanel">
-        <div class="panel-title"><i class="fas fa-user-plus"></i> Enroll New Student</div>
-        <div class="form-row">
-          <div class="field"><label for="studentName">Full Name *</label><input type="text" id="studentName" placeholder="e.g. Ankush Saini"/></div>
-          <div class="field"><label for="studentClass">Class / Batch</label><input type="text" id="studentClass" placeholder="e.g. 10-A"/></div>
-          <div class="field"><label for="studentContact">Contact Number</label><input type="text" id="studentContact" placeholder="Phone or email"/></div>
-          <div class="field"><label for="joiningDate">Admission Date *</label><input type="date" id="joiningDate"/></div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="top"><div class="stat-icon"><i class="fa-solid fa-user-group"></i></div><span class="stat-trend">Enrolled</span></div>
+            <div class="stat-label">Total Students</div>
+            <div class="stat-number" id="statTotalStudents">0</div>
+            <div class="stat-bar"><span id="bar1"></span></div>
+          </div>
+          <div class="stat-card green">
+            <div class="top"><div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div><span class="stat-trend" id="paidPct">0%</span></div>
+            <div class="stat-label">Months Paid</div>
+            <div class="stat-number" id="statFeesPaid">0</div>
+            <div class="stat-bar"><span id="bar2"></span></div>
+          </div>
+          <div class="stat-card orange">
+            <div class="top"><div class="stat-icon"><i class="fa-regular fa-clock"></i></div><span class="stat-trend">Awaiting</span></div>
+            <div class="stat-label">Months Pending</div>
+            <div class="stat-number" id="statFeesPending">0</div>
+            <div class="stat-bar"><span id="bar3"></span></div>
+          </div>
+          <div class="stat-card red">
+            <div class="top"><div class="stat-icon"><i class="fa-solid fa-bell"></i></div><span class="stat-trend">Late</span></div>
+            <div class="stat-label">Overdue Months</div>
+            <div class="stat-number" id="statOverdue">0</div>
+            <div class="stat-bar"><span id="bar4"></span></div>
+          </div>
         </div>
-        <button class="btn-primary" id="addStudentBtn"><i class="fas fa-plus"></i> Enroll Student</button>
-      </div>
-      <div class="card-panel">
-        <div class="panel-title"><i class="fas fa-address-book"></i> Student Directory <span class="text-muted" style="font-weight:500; margin-left:6px;" id="studentCount">(0)</span></div>
-        <div class="search-box">
-          <i class="fas fa-magnifying-glass"></i>
-          <input type="text" id="studentSearch" placeholder="Search by name, class or contact..."/>
-        </div>
-        <div class="table-wrapper">
-          <table class="student-table">
-            <thead><tr><th>#</th><th>Name</th><th>Class</th><th>Contact</th><th>Admission Date</th><th style="text-align:center;">Manage</th></tr></thead>
-            <tbody id="studentTableBody"><tr class="empty-row"><td colspan="6">No students enrolled yet. Use the form above to get started.</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
 
-    <!-- FEES -->
-    <div class="tab-content" id="tabFees">
-      <div class="card-panel">
-        <div class="panel-title"><i class="fas fa-file-invoice-dollar"></i> Monthly Fee Ledger</div>
-        <div class="fee-student-selector">
-          <label for="feeStudentSelect">Student:</label>
-          <select id="feeStudentSelect"><option value="">— Select a student —</option></select>
-          <span id="feeStudentInfo" class="text-muted" style="font-size:13px;"></span>
-        </div>
-        <div id="feeNoticeContainer"></div>
-        <div id="feeGridContainer">
-          <p class="text-muted" style="padding:24px 0; text-align:center;"><i class="fas fa-hand-pointer" style="color:var(--accent); margin-right:6px;"></i>Select a student above to open their fee ledger.</p>
-        </div>
-        <div class="fee-actions" id="feeActions" style="display:none;">
-          <button class="btn-primary" id="saveFeesBtn"><i class="fas fa-cloud-arrow-up"></i> Save Changes</button>
-          <button class="btn-secondary" id="markAllPaidBtn"><i class="fas fa-check-double"></i> Mark Year Paid</button>
-          <button class="btn-secondary" id="markAllUnpaidBtn"><i class="fas fa-rotate-left"></i> Reset All</button>
-          <span style="margin-left:auto; font-size:12px; color:var(--muted);" id="feeLastSaved"></span>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-hd">
+              <h3><span class="ci"><i class="fa-solid fa-chart-column"></i></span> Monthly Collection</h3>
+              <div class="right"><span class="chip"><span class="dot"></span> Paid entries</span></div>
+            </div>
+            <div class="card-bd"><div class="chart" id="chart"></div></div>
+          </div>
+
+          <div class="card">
+            <div class="card-hd">
+              <h3><span class="ci"><i class="fa-solid fa-triangle-exclamation"></i></span> Needs Attention</h3>
+              <div class="card-hd-sub"></div>
+            </div>
+            <div class="card-bd"><div class="plist" id="pendingList"></div></div>
+          </div>
         </div>
       </div>
-    </div>
 
-  </main>
+      <!-- ===== STUDENTS ===== -->
+      <div class="tab-content" id="tabStudents">
+        <div class="card" id="addStudentPanel" style="margin-bottom:18px">
+          <div class="card-hd">
+            <h3><span class="ci"><i class="fa-solid fa-user-plus"></i></span> Enroll New Student</h3>
+            <div class="right"><span class="chip"><i class="fa-solid fa-bolt"></i> Auto 12-month ledger</span></div>
+          </div>
+          <div class="card-bd">
+            <div class="form-row">
+              <div class="field"><label for="studentName">Full Name <span class="req">*</span></label><input type="text" class="inp" id="studentName" placeholder="e.g. Ankush Saini"/></div>
+              <div class="field"><label for="studentClass">Class / Section</label><input type="text" class="inp" id="studentClass" placeholder="e.g. 10-A"/></div>
+              <div class="field"><label for="studentContact">Contact</label><input type="text" class="inp" id="studentContact" placeholder="Phone or email"/></div>
+              <div class="field"><label for="joiningDate">Joining Date <span class="req">*</span></label><input type="date" class="inp" id="joiningDate"/></div>
+            </div>
+            <button class="btn btn-brand" id="addStudentBtn"><i class="fa-solid fa-circle-plus"></i> Add Student</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd">
+            <h3><span class="ci"><i class="fa-solid fa-table-list"></i></span> Student Directory</h3>
+            <div class="right"><span class="chip" id="studentCount">0</span></div>
+          </div>
+          <div class="toolbar">
+            <div class="tb-search"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="tableSearch" placeholder="Filter by name, class or contact..."/></div>
+            <button class="btn btn-ghost btn-sm" id="exportBtn2"><i class="fa-solid fa-file-csv"></i> Export</button>
+          </div>
+          <div class="table-wrap">
+            <table class="student-table">
+              <thead><tr>
+                <th style="width:48px">#</th><th>Student</th><th>Class</th><th>Contact</th>
+                <th>Joined</th><th>Fee Progress</th><th style="text-align:right">Action</th>
+              </tr></thead>
+              <tbody id="studentTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== FEES ===== -->
+      <div class="tab-content" id="tabFees">
+        <div class="card">
+          <div class="card-hd">
+            <h3><span class="ci"><i class="fa-solid fa-receipt"></i></span> Fee Ledger</h3>
+            <div class="right"><span class="chip" id="feeStudentInfo">No student selected</span></div>
+          </div>
+
+          <div class="toolbar">
+            <div class="fee-picker">
+              <div class="sel-wrap">
+                <i class="fa-solid fa-user"></i>
+                <select id="feeStudentSelect"><option value="">Choose a student…</option></select>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-bd">
+            <div id="feeNoticeContainer"></div>
+            <div id="feeRingWrap"></div>
+            <div id="feeGridContainer"></div>
+          </div>
+
+          <div class="fee-actions" id="feeActions" style="display:none">
+            <button class="btn btn-brand" id="saveFeesBtn"><i class="fa-solid fa-cloud-arrow-up"></i> Save Changes</button>
+            <button class="btn btn-ghost" id="markAllPaidBtn"><i class="fa-solid fa-check-double"></i> Mark All Paid</button>
+            <button class="btn btn-soft" id="markAllUnpaidBtn"><i class="fa-solid fa-eraser"></i> Clear All</button>
+            <span class="saved-tag" id="feeLastSaved"></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
 </div>
 
 <script type="module">
-// ===== 1. FIREBASE =====
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
-// ⚠️ Apna original Firebase config yahan paste kar (Firebase Console se)
+/* ==================== 1. CONFIG ==================== */
 const firebaseConfig = {
-  apiKey: "AIzaSyAlEbJb5TSun7jbZ6OBhVvpD9K7vcVbuk",
+  apiKey: "AIzaSyAlE-bJb5TSun7jbZ6OBhVvpD9K7vcVb_uk",
   authDomain: "ankushfee.firebaseapp.com",
   projectId: "ankushfee",
   storageBucket: "ankushfee.firebasestorage.app",
@@ -478,58 +665,100 @@ const firebaseConfig = {
   appId: "1:237546458741:web:9f43ba73e42a4431eaf23c",
   measurementId: "G-8F02KS9XW1"
 };
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// ===== 2. CONSTANTS & STATE =====
+const TEACHER_CREDENTIALS = { id: 'Ankush', pass: 'Ankush123@' };
 const MONTHS = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
 const MONTH_LABELS = { jan:'January', feb:'February', mar:'March', apr:'April', may:'May', jun:'June', jul:'July', aug:'August', sep:'September', oct:'October', nov:'November', dec:'December' };
-const TEACHER_CREDENTIALS = { id: 'Ankush', pass: 'Ankush123@' };
+const AV_COLORS = ['#4F46E5','#0891B2','#059669','#D97706','#DB2777','#7C3AED','#0284C7','#CA8A04'];
 
-let currentUser = null;
-let studentsList = [];
-let selectedStudentId = null;
-let feeData = {};
-let unsubscribe = null;
+/* ==================== 2. STATE & DOM ==================== */
+let db = null, FS = null;
+let currentUser = null, studentsList = [], selectedStudentId = null, feeData = {}, unsubscribe = null;
+let searchTerm = '';
 
 const $ = id => document.getElementById(id);
-const loginScreen = $('loginScreen'), appEl = $('app'), logoutBtn = $('logoutBtn');
-const studentRoleBtn = $('studentRoleBtn'), teacherRoleBtn = $('teacherRoleBtn');
-const teacherLoginForm = $('teacherLoginForm'), teacherId = $('teacherId'), teacherPass = $('teacherPass');
-const teacherLoginBtn = $('teacherLoginBtn'), studentLoginBtn = $('studentLoginBtn'), loginError = $('loginError');
-const userDisplayName = $('userDisplayName'), userRoleTag = $('userRoleTag'), userAvatar = $('userAvatar');
-const greetingName = $('greetingName'), greetingSub = $('greetingSub'), viewOnlyBanner = $('viewOnlyBanner');
-const statTotalStudents = $('statTotalStudents'), statFeesPaid = $('statFeesPaid'), statFeesPending = $('statFeesPending'), statOverdue = $('statOverdue');
-const studentName = $('studentName'), studentClass = $('studentClass'), studentContact = $('studentContact'), joiningDate = $('joiningDate');
-const addStudentBtn = $('addStudentBtn'), studentTableBody = $('studentTableBody'), studentCount = $('studentCount');
-const feeStudentSelect = $('feeStudentSelect'), feeGridContainer = $('feeGridContainer'), feeActions = $('feeActions');
-const saveFeesBtn = $('saveFeesBtn'), markAllPaidBtn = $('markAllPaidBtn'), markAllUnpaidBtn = $('markAllUnpaidBtn');
-const feeLastSaved = $('feeLastSaved'), feeStudentInfo = $('feeStudentInfo'), feeNoticeContainer = $('feeNoticeContainer');
+const loginScreen=$('loginScreen'), appEl=$('app'), logoutBtn=$('logoutBtn');
+const studentRoleBtn=$('studentRoleBtn'), teacherRoleBtn=$('teacherRoleBtn'), teacherLoginForm=$('teacherLoginForm');
+const teacherId=$('teacherId'), teacherPass=$('teacherPass'), teacherLoginBtn=$('teacherLoginBtn'), studentLoginBtn=$('studentLoginBtn'), loginError=$('loginError');
+const userDisplayName=$('userDisplayName'), userRoleTag=$('userRoleTag'), userAvatar=$('userAvatar');
+const greetingName=$('greetingName'), greetingSub=$('greetingSub'), viewOnlyBanner=$('viewOnlyBanner');
+const statTotalStudents=$('statTotalStudents'), statFeesPaid=$('statFeesPaid'), statFeesPending=$('statFeesPending'), statOverdue=$('statOverdue');
+const studentName=$('studentName'), studentClass=$('studentClass'), studentContact=$('studentContact'), joiningDate=$('joiningDate');
+const addStudentBtn=$('addStudentBtn'), studentTableBody=$('studentTableBody'), studentCount=$('studentCount');
+const feeStudentSelect=$('feeStudentSelect'), feeGridContainer=$('feeGridContainer'), feeActions=$('feeActions');
+const saveFeesBtn=$('saveFeesBtn'), markAllPaidBtn=$('markAllPaidBtn'), markAllUnpaidBtn=$('markAllUnpaidBtn');
+const feeLastSaved=$('feeLastSaved'), feeStudentInfo=$('feeStudentInfo'), feeNoticeContainer=$('feeNoticeContainer');
+const feeRingWrap=$('feeRingWrap'), chartEl=$('chart'), pendingList=$('pendingList');
+const pageTitle=$('pageTitle'), pageSub=$('pageSub'), navStudentCount=$('navStudentCount');
 
-const EMPTY_FEE_MSG = '<p class="text-muted" style="padding:24px 0; text-align:center;"><i class="fas fa-hand-pointer" style="color:var(--accent); margin-right:6px;"></i>Select a student above to open their fee ledger.</p>';
+const EMPTY_FEE_MSG = '<div class="empty-state"><div class="es-ico"><i class="fa-regular fa-folder-open"></i></div><h4>No student selected</h4><p>Pick a student from the dropdown above to view and update their monthly fee ledger.</p></div>';
 
-// Live date (UI addition)
-$('todayDate').textContent = new Date().toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+/* ==================== 3. THEME ==================== */
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  try{ localStorage.setItem('fd_theme', t); }catch(e){}
+  const dark = t === 'dark';
+  $('themeLbl').textContent = dark ? 'Light' : 'Dark';
+  $('themeBtn').querySelector('i').className = dark ? 'fa-regular fa-sun' : 'fa-regular fa-moon';
+  $('themeIco2').className = dark ? 'fa-regular fa-sun' : 'fa-regular fa-moon';
+}
+let savedTheme = 'light';
+try{ savedTheme = localStorage.getItem('fd_theme') || 'light'; }catch(e){}
+setTheme(savedTheme);
+function toggleTheme(){ setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); }
+$('themeBtn').addEventListener('click', toggleTheme);
+$('themeBtn2').addEventListener('click', toggleTheme);
 
-// ===== 3. TOAST =====
-function showToast(message, type = 'success') {
+/* ==================== 4. TOAST ==================== */
+function showToast(message, type='success'){
   const container = $('toastContainer');
   const toast = document.createElement('div');
   toast.className = 'toast ' + type;
-  const icon = type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation';
-  toast.innerHTML = '<i class="fas ' + icon + '"></i> ' + message;
+  const icon = type === 'success' ? 'fa-check' : 'fa-xmark';
+  toast.innerHTML = '<div class="ti"><i class="fa-solid ' + icon + '"></i></div><div></div>';
+  toast.lastElementChild.textContent = message;
   container.appendChild(toast);
-  setTimeout(() => { toast.classList.add('hide'); setTimeout(() => toast.remove(), 400); }, 3200);
+  setTimeout(() => { toast.classList.add('hide'); setTimeout(() => toast.remove(), 350); }, 3200);
 }
 
-// ===== 4. LOGIN / LOGOUT =====
-function loginAs(role) {
+/* ==================== 5. CONFIRM MODAL ==================== */
+const cm = $('confirmModal');
+let cmResolve = null;
+function askConfirm(title, text){
+  $('cmTitle').textContent = title;
+  $('cmText').textContent = text;
+  cm.classList.add('open');
+  return new Promise(res => { cmResolve = res; });
+}
+function closeConfirm(v){ cm.classList.remove('open'); if(cmResolve){ cmResolve(v); cmResolve = null; } }
+$('cmCancel').addEventListener('click', () => closeConfirm(false));
+$('cmOk').addEventListener('click', () => closeConfirm(true));
+cm.addEventListener('click', e => { if(e.target === cm) closeConfirm(false); });
+
+/* ==================== 6. FIREBASE ==================== */
+const SDK_VERSIONS = ['12.17.0', '10.12.2'];
+async function initFirebase(){
+  for (const v of SDK_VERSIONS){
+    try {
+      const appMod = await import(`https://www.gstatic.com/firebasejs/${v}/firebase-app.js`);
+      const fsMod  = await import(`https://www.gstatic.com/firebasejs/${v}/firebase-firestore.js`);
+      const fbApp  = appMod.initializeApp(firebaseConfig);
+      db = fsMod.getFirestore(fbApp); FS = fsMod;
+      console.log('Firebase ready (v' + v + ')');
+      return true;
+    } catch (err){ console.warn('Firebase v' + v + ' failed:', err); }
+  }
+  return false;
+}
+const fbReady = initFirebase();
+
+/* ==================== 7. LOGIN / LOGOUT ==================== */
+function loginAs(role){
   currentUser = role;
   loginScreen.classList.add('hidden');
   appEl.classList.add('visible');
   renderApp(role);
 }
-function logout() {
+function logout(){
   currentUser = null;
   loginScreen.classList.remove('hidden');
   appEl.classList.remove('visible');
@@ -539,7 +768,7 @@ function logout() {
   teacherRoleBtn.classList.remove('active-role');
   selectedStudentId = null; feeData = {};
   teacherId.value = ''; teacherPass.value = '';
-  if (unsubscribe) { unsubscribe(); unsubscribe = null; }
+  if (unsubscribe){ unsubscribe(); unsubscribe = null; }
   studentsList = [];
   renderStudentTable(); populateStudentSelect(); updateStats();
 }
@@ -562,48 +791,55 @@ studentLoginBtn.addEventListener('click', () => loginAs('student'));
 teacherLoginBtn.addEventListener('click', () => {
   const id = teacherId.value.trim();
   const pass = teacherPass.value.trim();
-  if (id === TEACHER_CREDENTIALS.id && pass === TEACHER_CREDENTIALS.pass) {
+  if (id === TEACHER_CREDENTIALS.id && pass === TEACHER_CREDENTIALS.pass){
     loginError.textContent = '';
     loginAs('teacher');
   } else {
-    loginError.textContent = 'Incorrect Staff ID or Password.';
-    teacherPass.value = '';
-    teacherPass.focus();
+    loginError.textContent = 'Invalid ID or password. Please try again.';
+    teacherPass.value = ''; teacherPass.focus();
   }
 });
-teacherPass.addEventListener('keydown', (e) => { if (e.key === 'Enter') teacherLoginBtn.click(); });
+teacherId.addEventListener('keydown', e => { if(e.key === 'Enter') teacherPass.focus(); });
+teacherPass.addEventListener('keydown', e => { if(e.key === 'Enter') teacherLoginBtn.click(); });
 logoutBtn.addEventListener('click', logout);
+$('togglePass').addEventListener('click', () => {
+  const on = teacherPass.type === 'password';
+  teacherPass.type = on ? 'text' : 'password';
+  $('togglePass').innerHTML = on ? '<i class="fa-regular fa-eye-slash"></i>' : '<i class="fa-regular fa-eye"></i>';
+});
 
-// ===== 5. FIRESTORE =====
-async function seedIfEmpty() {
+/* ==================== 8. FIRESTORE ==================== */
+async function seedIfEmpty(){
+  if (!db) return;
   try {
-    const q1 = query(collection(db, 'students'), limit(1));
-    const snapshot = await getDocs(q1);
-    if (snapshot.empty) {
+    const q = FS.query(FS.collection(db, 'students'), FS.limit(1));
+    const snap = await FS.getDocs(q);
+    if (snap.empty){
       const demo = [
-        { name: 'Aarav Sharma', class: '10-A', contact: '9876543210', joiningDate: '2026-01-15' },
-        { name: 'Priya Patel', class: '12-B', contact: '9876543211', joiningDate: '2026-02-01' }
+        { name:'Aarav Sharma', class:'10-A', contact:'9876543210', joiningDate:'2026-01-15' },
+        { name:'Priya Patel',  class:'12-B', contact:'9876543211', joiningDate:'2026-02-01' }
       ];
-      for (const s of demo) {
+      for (const s of demo){
         const fees = {};
-        MONTHS.forEach(m => { fees[m] = { paid: false, date: null }; });
-        fees.jan = { paid: true, date: '2026-01-20' };
-        fees.feb = { paid: true, date: '2026-02-18' };
-        await addDoc(collection(db, 'students'), { ...s, fees });
+        MONTHS.forEach(m => { fees[m] = { paid:false, date:null }; });
+        fees.jan = { paid:true, date:'2026-01-20' };
+        fees.feb = { paid:true, date:'2026-02-18' };
+        await FS.addDoc(FS.collection(db, 'students'), Object.assign({}, s, { fees }));
       }
     }
-  } catch (err) { console.error('Seed error:', err); }
+  } catch (err){ console.error('Seed error:', err); }
 }
 
-function listenToStudents() {
+function listenToStudents(){
+  if (!db) return;
   if (unsubscribe) unsubscribe();
-  const q1 = query(collection(db, 'students'), orderBy('name', 'asc'));
-  unsubscribe = onSnapshot(q1, (snapshot) => {
+  const q = FS.query(FS.collection(db, 'students'), FS.orderBy('name', 'asc'));
+  unsubscribe = FS.onSnapshot(q, snapshot => {
     studentsList = [];
     snapshot.forEach(d => {
       const data = d.data();
       const fees = data.fees || {};
-      MONTHS.forEach(m => { if (!fees[m]) fees[m] = { paid: false, date: null }; });
+      MONTHS.forEach(m => { if(!fees[m]) fees[m] = { paid:false, date:null }; });
       studentsList.push({
         id: d.id,
         name: data.name || '',
@@ -614,52 +850,93 @@ function listenToStudents() {
       });
     });
     renderStudentTable(); populateStudentSelect(); updateStats();
-    if (selectedStudentId) {
-      const stillExists = studentsList.some(s => s.id === selectedStudentId);
-      if (stillExists) { loadFeeData(selectedStudentId); }
+    if (selectedStudentId){
+      if (studentsList.some(s => s.id === selectedStudentId)) loadFeeData(selectedStudentId);
       else {
         selectedStudentId = null;
         feeGridContainer.innerHTML = EMPTY_FEE_MSG;
+        feeRingWrap.innerHTML = '';
         feeActions.style.display = 'none';
         feeNoticeContainer.innerHTML = '';
       }
     }
-  }, (error) => { showToast('Cloud sync error: ' + error.message, 'error'); });
+  }, error => showToast('Cloud error: ' + error.message, 'error'));
 }
 
-// ===== 6. RENDER APP =====
-function renderApp(role) {
+/* ==================== 9. RENDER APP ==================== */
+function renderApp(role){
   const isTeacher = role === 'teacher';
-  const displayName = isTeacher ? 'Ankush (Staff)' : 'Student';
+  const displayName = isTeacher ? 'Teacher' : 'Student';
+
   userDisplayName.textContent = displayName;
-  userRoleTag.textContent = isTeacher ? 'Administrator' : 'Viewer';
+  userRoleTag.textContent = isTeacher ? 'Admin' : 'Viewer';
   userRoleTag.className = 'role-tag' + (isTeacher ? '' : ' student-role');
-  userAvatar.textContent = isTeacher ? 'A' : 'S';
-  greetingName.textContent = isTeacher ? 'Ankush' : 'Student';
-  greetingSub.textContent = isTeacher ? "You're signed in with full admin rights. Manage enrollments and fee records freely." : "You're browsing in read-only mode. All records are visible but locked for editing.";
+  userAvatar.textContent = isTeacher ? 'T' : 'S';
+  greetingName.textContent = displayName;
+  greetingSub.textContent = isTeacher
+    ? "You have full control — add students, update ledgers and save to cloud."
+    : "You're viewing in read-only mode. Browse all records freely.";
   viewOnlyBanner.style.display = isTeacher ? 'none' : 'flex';
+
+  $('todayChip').textContent = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+
   enableEditing(isTeacher);
-  seedIfEmpty().then(() => listenToStudents());
+
   selectedStudentId = null; feeData = {};
   feeGridContainer.innerHTML = EMPTY_FEE_MSG;
+  feeRingWrap.innerHTML = '';
   feeActions.style.display = 'none';
   feeNoticeContainer.innerHTML = '';
+  feeStudentInfo.textContent = 'No student selected';
+
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelector('.tab-btn[data-tab="dashboard"]').classList.add('active');
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   $('tabDashboard').classList.add('active');
+  setPage('dashboard');
+
+  showSkeleton();
+  fbReady.then(ok => {
+    if (ok) seedIfEmpty().then(listenToStudents);
+    else { renderStudentTable(); showToast('Cloud not connected. Check internet / config.', 'error'); }
+  });
 }
 
-function enableEditing(enabled) {
+function enableEditing(enabled){
   document.querySelectorAll('#addStudentPanel input').forEach(el => el.disabled = !enabled);
   addStudentBtn.disabled = !enabled;
   saveFeesBtn.disabled = !enabled;
   markAllPaidBtn.disabled = !enabled;
   markAllUnpaidBtn.disabled = !enabled;
-  addStudentBtn.innerHTML = enabled ? '<i class="fas fa-plus"></i> Enroll Student' : '<i class="fas fa-lock"></i> Staff Only';
+  addStudentBtn.innerHTML = enabled
+    ? '<i class="fa-solid fa-circle-plus"></i> Add Student'
+    : '<i class="fa-solid fa-lock"></i> Locked (View Only)';
 }
 
-// ===== 7. TABS =====
+function showSkeleton(){
+  let h = '';
+  for (let i=0;i<4;i++){
+    h += '<tr><td><div class="skel" style="height:14px;width:20px"></div></td>' +
+      '<td><div style="display:flex;gap:11px;align-items:center"><div class="skel" style="width:35px;height:35px;border-radius:9px"></div><div><div class="skel" style="height:11px;width:110px"></div><div class="skel" style="height:9px;width:70px;margin-top:6px"></div></div></div></td>' +
+      '<td><div class="skel" style="height:20px;width:54px;border-radius:99px"></div></td>' +
+      '<td><div class="skel" style="height:12px;width:92px"></div></td>' +
+      '<td><div class="skel" style="height:12px;width:78px"></div></td>' +
+      '<td><div class="skel" style="height:12px;width:96px"></div></td>' +
+      '<td><div class="skel" style="height:28px;width:78px;border-radius:8px;margin-left:auto"></div></td></tr>';
+  }
+  studentTableBody.innerHTML = h;
+}
+
+/* ==================== 10. NAVIGATION ==================== */
+const PAGE_META = {
+  dashboard: ['Overview','Snapshot of collections and pending dues'],
+  students:  ['Students','Enroll, search and manage student records'],
+  fees:      ['Fee Ledger','Track and update month-wise payments']
+};
+function setPage(tabId){
+  const m = PAGE_META[tabId];
+  if (m){ pageTitle.textContent = m[0]; pageSub.textContent = m[1]; }
+}
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -668,122 +945,159 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     const target = $('tab' + tabId.charAt(0).toUpperCase() + tabId.slice(1));
     if (target) target.classList.add('active');
+    setPage(tabId);
+    closeSidebar();
     if (tabId === 'fees' && selectedStudentId) loadFeeData(selectedStudentId);
     if (tabId === 'dashboard') updateStats();
     if (tabId === 'students') renderStudentTable();
   });
 });
 
-// ===== 8. STUDENTS CRUD =====
-function renderStudentTable() {
+const sidebar = $('sidebar'), sbOverlay = $('sbOverlay');
+function closeSidebar(){ sidebar.classList.remove('open'); sbOverlay.classList.remove('show'); }
+$('burger').addEventListener('click', () => { sidebar.classList.add('open'); sbOverlay.classList.add('show'); });
+sbOverlay.addEventListener('click', closeSidebar);
+
+/* ==================== 11. SEARCH ==================== */
+function onSearch(v){
+  searchTerm = v.toLowerCase().trim();
+  $('globalSearch').value = v;
+  $('tableSearch').value = v;
+  if (!$('tabStudents').classList.contains('active')){
+    document.querySelector('.tab-btn[data-tab="students"]').click();
+  }
+  renderStudentTable();
+}
+$('globalSearch').addEventListener('input', e => { searchTerm = e.target.value.toLowerCase().trim(); $('tableSearch').value = e.target.value; renderStudentTable(); });
+$('tableSearch').addEventListener('input', e => { searchTerm = e.target.value.toLowerCase().trim(); $('globalSearch').value = e.target.value; renderStudentTable(); });
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); $('globalSearch').focus(); }
+  if (e.key === 'Escape'){ closeConfirm(false); closeSidebar(); }
+});
+
+/* ==================== 12. HELPERS ==================== */
+function escapeHtml(str){ if(!str) return ''; const d=document.createElement('div'); d.textContent=str; return d.innerHTML; }
+function initials(n){ if(!n) return '?'; const p=n.trim().split(/\s+/); return ((p[0][0]||'')+(p[1]?p[1][0]:'')).toUpperCase(); }
+function avColor(n){ let h=0; for(let i=0;i<(n||'x').length;i++) h=(h*31+n.charCodeAt(i))>>>0; return AV_COLORS[h%AV_COLORS.length]; }
+function paidCountOf(s){ let c=0; MONTHS.forEach(m => { if(s.fees && s.fees[m] && s.fees[m].paid) c++; }); return c; }
+
+/* ==================== 13. STUDENTS ==================== */
+function renderStudentTable(){
   const isTeacher = currentUser === 'teacher';
-  if (!studentsList.length) {
-    studentTableBody.innerHTML = '<tr class="empty-row"><td colspan="6">No students enrolled yet. Use the form above to get started.</td></tr>';
-    studentCount.textContent = '(0)';
+  navStudentCount.textContent = studentsList.length;
+  studentCount.textContent = studentsList.length + ' total';
+
+  const list = searchTerm
+    ? studentsList.filter(s => ((s.name||'')+' '+(s.class||'')+' '+(s.contact||'')).toLowerCase().includes(searchTerm))
+    : studentsList;
+
+  if (!list.length){
+    const isSearch = !!searchTerm && studentsList.length > 0;
+    studentTableBody.innerHTML = '<tr class="empty-row"><td colspan="7"><div class="empty-state">' +
+      '<div class="es-ico"><i class="fa-solid ' + (isSearch ? 'fa-magnifying-glass' : 'fa-user-plus') + '"></i></div>' +
+      '<h4>' + (isSearch ? 'No matches found' : 'No students yet') + '</h4>' +
+      '<p>' + (isSearch ? 'Try a different name, class or contact number.' : 'Use the form above to enroll your first student and start tracking fees.') + '</p>' +
+      '</div></td></tr>';
     return;
   }
+
   let html = '';
-  studentsList.forEach((s, idx) => {
-    const joinDate = s.joiningDate ? new Date(s.joiningDate).toLocaleDateString('en-IN') : '—';
-    html += '<tr>'
-      + '<td style="color:var(--muted);">' + (idx + 1) + '</td>'
-      + '<td><strong>' + escapeHtml(s.name || '—') + '</strong></td>'
-      + '<td>' + escapeHtml(s.class || '—') + '</td>'
-      + '<td>' + escapeHtml(s.contact || '—') + '</td>'
-      + '<td>' + joinDate + '</td>'
-      + '<td style="text-align:center;"><div class="actions" style="justify-content:center;">'
-      + '<button class="btn-danger" onclick="window.deleteStudent(\'' + s.id + '\')"' + (isTeacher ? '' : ' disabled') + '>'
-      + '<i class="fas fa-trash-can"></i> Remove</button></div></td></tr>';
+  list.forEach((s, idx) => {
+    const joinDate = s.joiningDate ? new Date(s.joiningDate).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+    const pc = paidCountOf(s);
+    const pct = Math.round(pc / 12 * 100);
+    const cls = pct === 100 ? 'ok' : (pct >= 50 ? 'warn' : 'bad');
+    const disabled = isTeacher ? '' : 'disabled';
+    html += '<tr>' +
+      '<td style="color:var(--text-3);font-weight:600">' + (idx + 1) + '</td>' +
+      '<td><div class="cell-user"><div class="cell-av" style="background:' + avColor(s.name) + '">' + initials(s.name) + '</div>' +
+        '<div><div class="cell-nm">' + escapeHtml(s.name || 'Unnamed') + '</div><div class="cell-sub">ID ' + s.id.slice(0,6).toUpperCase() + '</div></div></div></td>' +
+      '<td><span class="chip">' + escapeHtml(s.class || '—') + '</span></td>' +
+      '<td style="color:var(--text-2)">' + escapeHtml(s.contact || '—') + '</td>' +
+      '<td style="color:var(--text-2)">' + joinDate + '</td>' +
+      '<td><span class="chip ' + cls + '"><span class="dot"></span> ' + pc + '/12 paid</span>' +
+        '<div class="mini-bar"><span style="width:' + pct + '%"></span></div></td>' +
+      '<td style="text-align:right"><button class="btn btn-bad btn-sm" onclick="window.deleteStudent(\'' + s.id + '\')" ' + disabled + '><i class="fa-regular fa-trash-can"></i> Remove</button></td>' +
+    '</tr>';
   });
   studentTableBody.innerHTML = html;
-  studentCount.textContent = '(' + studentsList.length + ')';
-  applySearchFilter();
 }
 
-// Search filter (UI addition — DOM only, no logic change)
-const studentSearch = $('studentSearch');
-function applySearchFilter() {
-  const term = (studentSearch.value || '').toLowerCase().trim();
-  document.querySelectorAll('#studentTableBody tr').forEach(row => {
-    if (row.classList.contains('empty-row')) return;
-    row.style.display = !term || row.textContent.toLowerCase().includes(term) ? '' : 'none';
-  });
-}
-studentSearch.addEventListener('input', applySearchFilter);
-
-window.deleteStudent = async function(id) {
-  if (currentUser !== 'teacher') { showToast('Only staff members can remove students.', 'error'); return; }
+window.deleteStudent = async function(id){
+  if (currentUser !== 'teacher'){ showToast('Only teachers can delete students.', 'error'); return; }
   const student = studentsList.find(s => s.id === id);
   if (!student) return;
-  if (!confirm('Remove "' + student.name + '" along with all fee records? This cannot be undone.')) return;
+  const ok = await askConfirm('Remove ' + (student.name || 'this student') + '?', 'This will permanently delete the student and their entire 12-month fee history. This cannot be undone.');
+  if (!ok) return;
   try {
-    await deleteDoc(doc(db, 'students', id));
-    showToast('Student record removed.');
-  } catch (err) { showToast('Delete failed: ' + err.message, 'error'); }
+    await FS.deleteDoc(FS.doc(db, 'students', id));
+    showToast('Student removed successfully.');
+  } catch (err){ showToast('Error deleting: ' + err.message, 'error'); }
 };
 
-function populateStudentSelect() {
+function populateStudentSelect(){
   const currentVal = feeStudentSelect.value;
-  feeStudentSelect.innerHTML = '<option value="">— Select a student —</option>';
+  feeStudentSelect.innerHTML = '<option value="">Choose a student…</option>';
   studentsList.forEach(s => {
     const opt = document.createElement('option');
     opt.value = s.id;
-    opt.textContent = (s.name || 'Unnamed') + (s.class ? ' · ' + s.class : '');
+    opt.textContent = (s.name || 'Unnamed') + (s.class ? '  ·  ' + s.class : '');
     feeStudentSelect.appendChild(opt);
   });
-  if (currentVal && studentsList.some(s => s.id === currentVal)) {
-    feeStudentSelect.value = currentVal;
-  } else if (studentsList.length) {
-    feeStudentSelect.value = studentsList[0].id;
-  }
+  if (currentVal && studentsList.some(s => s.id === currentVal)) feeStudentSelect.value = currentVal;
+  else if (studentsList.length) feeStudentSelect.value = studentsList[0].id;
   feeStudentSelect.dispatchEvent(new Event('change'));
 }
 
 addStudentBtn.addEventListener('click', async () => {
-  if (currentUser !== 'teacher') { showToast('Only staff members can enroll students.', 'error'); return; }
+  if (currentUser !== 'teacher'){ showToast('Only teachers can add students.', 'error'); return; }
+  if (!db){ showToast('Cloud not connected.', 'error'); return; }
   const name = studentName.value.trim();
-  if (!name) { showToast('Student name is required.', 'error'); return; }
-  const cls = studentClass.value.trim() || '';
-  const contact = studentContact.value.trim() || '';
+  if (!name){ showToast('Please enter a student name.', 'error'); studentName.focus(); return; }
   const joinDateVal = joiningDate.value;
-  if (!joinDateVal) { showToast('Please choose an admission date.', 'error'); return; }
+  if (!joinDateVal){ showToast('Please select a joining date.', 'error'); joiningDate.focus(); return; }
   try {
     addStudentBtn.disabled = true;
-    addStudentBtn.innerHTML = '<span class="spinner"></span> Enrolling...';
+    addStudentBtn.innerHTML = '<span class="spinner"></span> Saving…';
     const fees = {};
-    MONTHS.forEach(m => { fees[m] = { paid: false, date: null }; });
-    await addDoc(collection(db, 'students'), { name, class: cls, contact, joiningDate: joinDateVal, fees });
-    showToast('"' + name + '" enrolled successfully!');
-    studentName.value = ''; studentClass.value = ''; studentContact.value = ''; joiningDate.value = '';
-  } catch (err) {
-    showToast('Enrollment failed: ' + err.message, 'error');
+    MONTHS.forEach(m => { fees[m] = { paid:false, date:null }; });
+    await FS.addDoc(FS.collection(db, 'students'), {
+      name: name, class: studentClass.value.trim(), contact: studentContact.value.trim(),
+      joiningDate: joinDateVal, fees: fees
+    });
+    showToast(name + ' enrolled successfully.');
+    studentName.value=''; studentClass.value=''; studentContact.value=''; joiningDate.value='';
+  } catch (err){
+    showToast('Error adding student: ' + err.message, 'error');
   } finally {
     addStudentBtn.disabled = false;
-    addStudentBtn.innerHTML = '<i class="fas fa-plus"></i> Enroll Student';
+    addStudentBtn.innerHTML = '<i class="fa-solid fa-circle-plus"></i> Add Student';
   }
 });
 
-// ===== 9. FEES =====
+/* ==================== 14. FEES ==================== */
 feeStudentSelect.addEventListener('change', () => {
   const id = feeStudentSelect.value;
-  if (!id) {
+  if (!id){
     selectedStudentId = null; feeData = {};
     feeGridContainer.innerHTML = EMPTY_FEE_MSG;
+    feeRingWrap.innerHTML = '';
     feeActions.style.display = 'none';
-    feeStudentInfo.textContent = '';
+    feeStudentInfo.textContent = 'No student selected';
     feeNoticeContainer.innerHTML = '';
     return;
   }
   selectedStudentId = id;
   const student = studentsList.find(s => s.id === id);
-  feeStudentInfo.textContent = student ? ('Viewing ledger of ' + (student.name || 'Unnamed')) : '';
+  feeStudentInfo.textContent = student ? (student.name || 'Unnamed') : '';
   loadFeeData(id);
 });
 
-function loadFeeData(studentId) {
+function loadFeeData(studentId){
   const student = studentsList.find(s => s.id === studentId);
-  if (!student) {
-    feeGridContainer.innerHTML = '<p class="text-muted" style="padding:24px 0;text-align:center;">Student record not found.</p>';
+  if (!student){
+    feeGridContainer.innerHTML = EMPTY_FEE_MSG;
+    feeRingWrap.innerHTML = '';
     feeActions.style.display = 'none';
     feeNoticeContainer.innerHTML = '';
     return;
@@ -791,57 +1105,73 @@ function loadFeeData(studentId) {
   feeData = student.fees;
   renderFeeGrid();
   feeActions.style.display = 'flex';
-  feeLastSaved.textContent = 'Synced from cloud';
+  feeLastSaved.textContent = 'Synced with cloud';
   enableEditing(currentUser === 'teacher');
   showFeeNotice(student);
 }
 
-function renderFeeGrid() {
-  if (!selectedStudentId || !feeData) { feeGridContainer.innerHTML = EMPTY_FEE_MSG; return; }
+function renderRing(){
+  let paid = 0;
+  MONTHS.forEach(m => { if(feeData[m] && feeData[m].paid) paid++; });
+  const pct = Math.round(paid / 12 * 100);
+  const st = studentsList.find(s => s.id === selectedStudentId);
+  feeRingWrap.innerHTML =
+    '<div class="ring-wrap">' +
+      '<div class="ring" style="--p:' + pct + ';position:relative"><b>' + pct + '%</b></div>' +
+      '<div class="ring-meta"><h4>' + escapeHtml(st ? (st.name||'Student') : 'Student') + '</h4>' +
+      '<p>Joined ' + (st && st.joiningDate ? new Date(st.joiningDate).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : '—') + (st && st.class ? '  ·  Class ' + escapeHtml(st.class) : '') + '</p></div>' +
+      '<div class="ring-legend">' +
+        '<div class="lg"><b style="color:var(--ok)">' + paid + '</b> Paid</div>' +
+        '<div class="lg"><b style="color:var(--warn)">' + (12 - paid) + '</b> Pending</div>' +
+        '<div class="lg"><b>12</b> Total</div>' +
+      '</div>' +
+    '</div>';
+}
+
+function renderFeeGrid(){
+  if (!selectedStudentId || !feeData){ feeGridContainer.innerHTML = EMPTY_FEE_MSG; feeRingWrap.innerHTML=''; return; }
+  renderRing();
   const isTeacher = currentUser === 'teacher';
   let html = '<div class="fee-grid">';
   MONTHS.forEach(m => {
-    const entry = feeData[m] || { paid: false, date: null };
-    const paid = entry.paid || false;
+    const entry = feeData[m] || { paid:false, date:null };
+    const paid = !!entry.paid;
     const dateVal = entry.date || '';
-    const statusClass = paid ? 'paid' : 'unpaid';
-    const statusText = paid ? 'Received' : 'Due';
-    const disabledAttr = !isTeacher ? 'disabled' : '';
-    html += '<div class="fee-item" data-month="' + m + '">'
-      + '<div class="month-label"><span>' + MONTH_LABELS[m] + '</span>'
-      + '<span class="status-badge ' + statusClass + '">' + statusText + '</span></div>'
-      + '<div class="fee-controls">'
-      + '<input type="checkbox" ' + (paid ? 'checked' : '') + ' ' + disabledAttr + ' data-month="' + m + '" class="fee-checkbox" />'
-      + '<input type="date" value="' + dateVal + '" ' + (paid ? '' : 'disabled') + ' ' + disabledAttr + ' data-month="' + m + '" class="fee-date" />'
-      + '</div></div>';
+    const dis = isTeacher ? '' : 'disabled';
+    html += '<div class="fee-item ' + (paid ? 'is-paid' : '') + '" data-month="' + m + '">' +
+      '<div class="month-label"><span>' + MONTH_LABELS[m] + '</span>' +
+      '<span class="status-badge ' + (paid ? 'paid' : 'unpaid') + '">' + (paid ? 'Paid' : 'Due') + '</span></div>' +
+      '<div class="fee-controls">' +
+        '<input type="checkbox" class="fee-checkbox" data-month="' + m + '" ' + (paid ? 'checked' : '') + ' ' + dis + ' />' +
+        '<input type="date" class="fee-date" data-month="' + m + '" value="' + dateVal + '" ' + (paid ? '' : 'disabled') + ' ' + dis + ' />' +
+      '</div></div>';
   });
   html += '</div>';
   feeGridContainer.innerHTML = html;
 
-  if (isTeacher) {
+  if (isTeacher){
     document.querySelectorAll('.fee-checkbox').forEach(cb => {
-      cb.addEventListener('change', (e) => {
+      cb.addEventListener('change', e => {
         const month = e.target.dataset.month;
         const dateInput = document.querySelector('.fee-date[data-month="' + month + '"]');
-        if (e.target.checked) {
+        if (!feeData[month]) feeData[month] = { paid:false, date:null };
+        if (e.target.checked){
           dateInput.disabled = false;
           if (!dateInput.value) dateInput.value = new Date().toISOString().split('T')[0];
           feeData[month].paid = true;
           feeData[month].date = dateInput.value;
         } else {
-          dateInput.disabled = true;
-          dateInput.value = '';
-          feeData[month].paid = false;
-          feeData[month].date = null;
+          dateInput.disabled = true; dateInput.value = '';
+          feeData[month].paid = false; feeData[month].date = null;
         }
         updateFeeUI(month);
         feeLastSaved.textContent = 'Unsaved changes';
       });
     });
     document.querySelectorAll('.fee-date').forEach(inp => {
-      inp.addEventListener('change', (e) => {
+      inp.addEventListener('change', e => {
         const month = e.target.dataset.month;
-        if (feeData[month]) {
+        if (feeData[month]){
           feeData[month].date = e.target.value || null;
           feeLastSaved.textContent = 'Unsaved changes';
         }
@@ -849,146 +1179,195 @@ function renderFeeGrid() {
     });
   }
   updateStats();
-  const student = studentsList.find(s => s.id === selectedStudentId);
-  if (student) showFeeNotice(student);
 }
 
-function updateFeeUI(month) {
+function updateFeeUI(month){
   const entry = feeData[month];
   if (!entry) return;
-  const badge = document.querySelector('.fee-item[data-month="' + month + '"] .status-badge');
-  if (badge) {
-    if (entry.paid) { badge.textContent = 'Received'; badge.className = 'status-badge paid'; }
-    else { badge.textContent = 'Due'; badge.className = 'status-badge unpaid'; }
+  const item = document.querySelector('.fee-item[data-month="' + month + '"]');
+  if (item){
+    item.classList.toggle('is-paid', !!entry.paid);
+    const badge = item.querySelector('.status-badge');
+    badge.textContent = entry.paid ? 'Paid' : 'Due';
+    badge.className = 'status-badge ' + (entry.paid ? 'paid' : 'unpaid');
   }
+  renderRing();
   updateStats();
   const student = studentsList.find(s => s.id === selectedStudentId);
   if (student) showFeeNotice(student);
 }
 
-function showFeeNotice(student) {
-  const container = feeNoticeContainer;
-  if (!student || !student.joiningDate) { container.innerHTML = ''; return; }
+function showFeeNotice(student){
+  if (!student || !student.joiningDate){ feeNoticeContainer.innerHTML = ''; return; }
   const joinDate = new Date(student.joiningDate + 'T00:00:00');
   const now = new Date();
   const monthsSince = (now.getFullYear() - joinDate.getFullYear()) * 12 + (now.getMonth() - joinDate.getMonth());
   const allPaid = MONTHS.every(m => feeData[m] && feeData[m].paid);
-  let message = '', type = '';
-  if (monthsSince >= 12 && allPaid) {
-    message = 'Annual fee cycle complete — all 12 months received. Great job!'; type = 'complete';
-  } else if (monthsSince >= 12 && !allPaid) {
-    const pending = MONTHS.filter(m => !feeData[m] || !feeData[m].paid);
-    message = 'Annual cycle over with dues pending: ' + pending.map(m => MONTH_LABELS[m]).join(', ') + '. Please follow up.';
-    type = 'warning';
+
+  let message = '', type = 'info', icon = 'fa-circle-info';
+  if (monthsSince >= 12 && allPaid){
+    message = 'Fee cycle complete — all 12 months have been settled.'; type = 'ok'; icon = 'fa-circle-check';
+  } else if (monthsSince >= 12 && !allPaid){
+    const pending = MONTHS.filter(m => !feeData[m] || !feeData[m].paid).map(m => MONTH_LABELS[m]).join(', ');
+    message = 'Cycle ended with dues pending — ' + pending + '.'; type = 'warn'; icon = 'fa-triangle-exclamation';
   } else {
     const remaining = 12 - monthsSince;
-    if (remaining > 0) { message = remaining + ' month(s) left in this student\'s annual fee cycle.'; type = 'info'; }
-    else { message = 'Annual fee cycle completed.'; type = 'info'; }
+    message = remaining > 0
+      ? (remaining + ' month(s) remaining in this fee cycle from the joining date.')
+      : 'Fee cycle completed.';
+    type = 'info'; icon = 'fa-hourglass-half';
   }
-  const iconClass = type === 'complete' ? 'fa-circle-check' : type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-info';
-  container.innerHTML = '<div class="fee-notice ' + type + '"><i class="fas ' + iconClass + '"></i> ' + message + '</div>';
+  feeNoticeContainer.innerHTML = '<div class="banner ' + type + '"><i class="fa-solid ' + icon + '"></i><div>' + message + '</div></div>';
 }
 
 saveFeesBtn.addEventListener('click', async () => {
-  if (currentUser !== 'teacher') { showToast('Only staff members can save changes.', 'error'); return; }
-  if (!selectedStudentId) { showToast('No student selected.', 'error'); return; }
+  if (currentUser !== 'teacher'){ showToast('Only teachers can save changes.', 'error'); return; }
+  if (!selectedStudentId){ showToast('No student selected.', 'error'); return; }
+  if (!db){ showToast('Cloud not connected.', 'error'); return; }
   document.querySelectorAll('.fee-checkbox').forEach(cb => {
     const month = cb.dataset.month;
     const dateInput = document.querySelector('.fee-date[data-month="' + month + '"]');
-    if (feeData[month]) {
-      feeData[month].paid = cb.checked;
-      feeData[month].date = cb.checked ? (dateInput ? dateInput.value : null) : null;
-    }
+    if (!feeData[month]) feeData[month] = { paid:false, date:null };
+    feeData[month].paid = cb.checked;
+    feeData[month].date = cb.checked ? (dateInput ? dateInput.value : null) : null;
   });
   try {
     saveFeesBtn.disabled = true;
-    saveFeesBtn.innerHTML = '<span class="spinner"></span> Saving...';
-    await updateDoc(doc(db, 'students', selectedStudentId), { fees: feeData });
-    showToast('Fee ledger saved to cloud!');
-    feeLastSaved.textContent = 'Saved · ' + new Date().toLocaleTimeString();
-  } catch (err) {
-    showToast('Save failed: ' + err.message, 'error');
+    saveFeesBtn.innerHTML = '<span class="spinner"></span> Saving…';
+    await FS.updateDoc(FS.doc(db, 'students', selectedStudentId), { fees: feeData });
+    showToast('Ledger saved to cloud.');
+    feeLastSaved.textContent = 'Saved at ' + new Date().toLocaleTimeString();
+  } catch (err){
+    showToast('Error saving: ' + err.message, 'error');
   } finally {
     saveFeesBtn.disabled = false;
-    saveFeesBtn.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> Save Changes';
+    saveFeesBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Save Changes';
   }
 });
 
 markAllPaidBtn.addEventListener('click', () => {
-  if (currentUser !== 'teacher') { showToast('Only staff members can do this.', 'error'); return; }
+  if (currentUser !== 'teacher'){ showToast('Only teachers can do this.', 'error'); return; }
   if (!selectedStudentId) return;
   const today = new Date().toISOString().split('T')[0];
-  MONTHS.forEach(m => { if (feeData[m]) { feeData[m].paid = true; feeData[m].date = today; } });
+  MONTHS.forEach(m => { feeData[m] = { paid:true, date:today }; });
   renderFeeGrid();
-  feeLastSaved.textContent = 'Unsaved changes — click Save';
-  showToast('All 12 months marked as received. Remember to save!');
+  feeLastSaved.textContent = 'Unsaved changes';
+  showToast('All 12 months marked paid — remember to save.');
 });
 
 markAllUnpaidBtn.addEventListener('click', () => {
-  if (currentUser !== 'teacher') { showToast('Only staff members can do this.', 'error'); return; }
+  if (currentUser !== 'teacher'){ showToast('Only teachers can do this.', 'error'); return; }
   if (!selectedStudentId) return;
-  MONTHS.forEach(m => { if (feeData[m]) { feeData[m].paid = false; feeData[m].date = null; } });
+  MONTHS.forEach(m => { feeData[m] = { paid:false, date:null }; });
   renderFeeGrid();
-  feeLastSaved.textContent = 'Unsaved changes — click Save';
-  showToast('Ledger reset. Remember to save!');
+  feeLastSaved.textContent = 'Unsaved changes';
+  showToast('Ledger cleared — remember to save.');
 });
 
-// ===== 10. STATS =====
-function updateStats() {
-  statTotalStudents.textContent = studentsList.length;
+/* ==================== 15. STATS + WIDGETS ==================== */
+function animateNum(el, to){
+  const from = parseInt(el.textContent) || 0;
+  if (from === to){ el.textContent = to; return; }
+  const steps = 16; let i = 0;
+  const t = setInterval(() => {
+    i++; el.textContent = Math.round(from + (to - from) * (i/steps));
+    if (i >= steps){ clearInterval(t); el.textContent = to; }
+  }, 22);
+}
+
+function updateStats(){
+  const total = studentsList.length;
   let paidCount = 0, pendingCount = 0, overdueCount = 0;
+  const monthly = new Array(12).fill(0);
   const now = new Date();
+
   studentsList.forEach(s => {
     const fees = s.fees || {};
     MONTHS.forEach((m, idx) => {
-      const entry = fees[m] || { paid: false, date: null };
-      if (entry.paid) {
-        paidCount++;
-        if (entry.date) {
+      const entry = fees[m] || { paid:false, date:null };
+      if (entry.paid){
+        paidCount++; monthly[idx]++;
+        if (entry.date){
           const paidDate = new Date(entry.date + 'T00:00:00');
-          if (paidDate.getFullYear() > now.getFullYear() || (paidDate.getFullYear() === now.getFullYear() && paidDate.getMonth() > idx)) {
-            overdueCount++;
-          }
+          if (paidDate.getFullYear() > now.getFullYear() ||
+             (paidDate.getFullYear() === now.getFullYear() && paidDate.getMonth() > idx)) overdueCount++;
         }
-      } else { pendingCount++; }
+      } else pendingCount++;
     });
   });
-  statFeesPaid.textContent = paidCount;
-  statFeesPending.textContent = pendingCount;
-  statOverdue.textContent = overdueCount;
 
-  // Collection rate bar (UI addition)
-  const totalSlots = paidCount + pendingCount;
-  const pct = totalSlots ? Math.round((paidCount / totalSlots) * 100) : 0;
-  $('collectionPct').textContent = pct + '%';
-  $('collectionBar').style.width = pct + '%';
+  animateNum(statTotalStudents, total);
+  animateNum(statFeesPaid, paidCount);
+  animateNum(statFeesPending, pendingCount);
+  animateNum(statOverdue, overdueCount);
+
+  const slots = total * 12 || 1;
+  const pct = Math.round(paidCount / slots * 100);
+  $('paidPct').textContent = pct + '%';
+  $('bar1').style.width = total ? '100%' : '0%';
+  $('bar2').style.width = pct + '%';
+  $('bar3').style.width = Math.round(pendingCount / slots * 100) + '%';
+  $('bar4').style.width = Math.round(overdueCount / slots * 100) + '%';
+
+  // chart
+  const max = Math.max.apply(null, monthly.concat([1]));
+  let ch = '';
+  MONTHS.forEach((m, i) => {
+    const h = Math.max(4, Math.round(monthly[i] / max * 128));
+    ch += '<div class="chart-col"><div class="chart-bar" data-v="' + monthly[i] + ' paid" style="height:' + h + 'px"></div>' +
+          '<div class="chart-lbl">' + MONTH_LABELS[m].slice(0,3) + '</div></div>';
+  });
+  chartEl.innerHTML = ch;
+
+  // needs attention
+  const ranked = studentsList.map(s => ({ s:s, p:paidCountOf(s) })).sort((a,b) => a.p - b.p).slice(0,5);
+  if (!ranked.length){
+    pendingList.innerHTML = '<div class="empty-state" style="padding:28px 10px"><div class="es-ico"><i class="fa-regular fa-face-smile"></i></div><h4>Nothing here yet</h4><p>Student dues will appear once you enroll someone.</p></div>';
+  } else {
+    let ph = '';
+    ranked.forEach(r => {
+      const p = Math.round(r.p / 12 * 100);
+      ph += '<div class="prow"><div class="av" style="background:' + avColor(r.s.name) + '22;color:' + avColor(r.s.name) + '">' + initials(r.s.name) + '</div>' +
+        '<div><div class="nm">' + escapeHtml(r.s.name || 'Unnamed') + '</div><div class="sb">' + escapeHtml(r.s.class || 'No class') + '  ·  ' + (12 - r.p) + ' due</div></div>' +
+        '<div class="val"><div class="pct">' + p + '%</div><div class="mini-bar"><span style="width:' + p + '%"></span></div></div></div>';
+    });
+    pendingList.innerHTML = ph;
+  }
 }
 
-// ===== 11. UTILITY =====
-function escapeHtml(str) {
-  if (!str) return '';
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
+/* ==================== 16. EXPORT CSV ==================== */
+function exportCSV(){
+  if (!studentsList.length){ showToast('No data to export.', 'error'); return; }
+  const head = ['Name','Class','Contact','Joining Date','Paid Months'].concat(MONTHS.map(m => MONTH_LABELS[m]));
+  const rows = [head];
+  studentsList.forEach(s => {
+    const r = [s.name, s.class, s.contact, s.joiningDate, paidCountOf(s) + '/12'];
+    MONTHS.forEach(m => {
+      const e = s.fees[m] || {};
+      r.push(e.paid ? ('Paid ' + (e.date || '')) : 'Due');
+    });
+    rows.push(r);
+  });
+  const csv = rows.map(r => r.map(c => '"' + String(c == null ? '' : c).replace(/"/g,'""') + '"').join(',')).join('\n');
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'feedesk-students-' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('CSV exported (' + studentsList.length + ' students).');
 }
+$('exportBtn').addEventListener('click', exportCSV);
+$('exportBtn2').addEventListener('click', exportCSV);
+$('refreshBtn').addEventListener('click', () => {
+  if (!db){ showToast('Cloud not connected.', 'error'); return; }
+  showSkeleton(); listenToStudents(); showToast('Data refreshed from cloud.');
+});
 
-// ===== 12. INIT =====
+/* ==================== 17. INIT ==================== */
 loginScreen.classList.remove('hidden');
 appEl.classList.remove('visible');
-console.log('✅ FeeDesk loaded. Staff: Ankush / Ankush123@');
+console.log('FeeDesk loaded — Teacher: Ankush / Ankush123@');
 </script>
 </body>
 </html>
-```
-
-### Summary of changes:
-| Purana | Naya |
-|---|---|
-| Top tabs | **Left sidebar** (mobile pe bottom bar ban jata hai) |
-| "Fee Manager" | **"FeeDesk"** branding |
-| Student/Teacher | **Student Portal / Staff Portal** |
-| Paid/Pending badge | **Received / Due** |
-| Mark All Paid | **Mark Year Paid** |
-| — | **Search box**, **Collection Rate bar**, **Live date** ✨ |
-
-Login same hai: `Ankush` / `Ankush123@`. Firebase config wali line pe apna original config check kar lena. Test karke bata! 🚀
